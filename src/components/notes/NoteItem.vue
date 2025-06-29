@@ -49,18 +49,18 @@ export default {
 
 <style scoped>
 .note-item {
-  background-color: #fff;
-  border: 1px solid #000;
-  padding: 12px;
-  margin-bottom: 12px;
+  background-color: var(--color-bg-secondary);
+  border: var(--border-width-thin) solid var(--color-gray-500);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--space-4);
 }
 
 .note-icon {
-  width: 24px;
-  height: 24px;
+  width: var(--icon-size-base);
+  height: var(--icon-size-base);
   flex-shrink: 0;
   image-rendering: pixelated;
 }
@@ -70,49 +70,51 @@ export default {
 }
 
 .note-text {
-  margin-bottom: 8px;
-  line-height: 1.4;
+  margin-bottom: var(--space-3);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-sm);
 }
 
 .note-categories {
-  margin-top: 8px;
-  font-size: 10px;
-  color: #666;
+  margin-top: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
 }
 
 .note-groups {
-  margin-top: 4px;
-  font-size: 10px;
-  color: #000080;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
 }
 
 .note-date {
-  margin-top: 8px;
-  font-size: 10px;
-  color: #808080;
+  margin-top: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
 }
 
 .note-actions {
   display: flex;
-  gap: 4px;
+  gap: var(--space-2);
 }
 
 .action-btn {
-  background-color: #c0c0c0;
-  border: 1px solid;
-  border-top-color: #fff;
-  border-left-color: #fff;
-  border-right-color: #000;
-  border-bottom-color: #000;
-  padding: 2px 8px;
-  font-size: 10px;
+  background-color: var(--btn-bg);
+  border: var(--border-width-thin) solid;
+  border-top-color: var(--border-raised-top);
+  border-left-color: var(--border-raised-left);
+  border-right-color: var(--border-raised-right);
+  border-bottom-color: var(--border-raised-bottom);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
   cursor: pointer;
+  transition: var(--transition-fast);
 }
 
 .action-btn:active {
-  border-top-color: #000;
-  border-left-color: #000;
-  border-right-color: #fff;
-  border-bottom-color: #fff;
+  border-top-color: var(--border-raised-bottom);
+  border-left-color: var(--border-raised-bottom);
+  border-right-color: var(--border-raised-top);
+  border-bottom-color: var(--border-raised-top);
 }
 </style>

@@ -64,28 +64,36 @@ export default {
 
 <style scoped>
 .notes-list {
-  margin-top: 16px;
+  margin-top: var(--space-5);
 }
 
 .loading-container {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: var(--space-8);
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px;
-  background-color: #fff;
-  border: 1px inset #000;
+  padding: var(--space-8);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
 }
 
 .pagination-info {
   text-align: center;
-  margin-top: 16px;
-  padding: 8px;
-  background-color: #fff;
-  border: 1px inset #000;
-  font-size: 11px;
+  margin-top: var(--space-5);
+  padding: var(--space-3);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
+  font-size: var(--font-size-sm);
 }
 </style>

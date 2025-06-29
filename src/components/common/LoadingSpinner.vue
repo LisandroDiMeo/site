@@ -23,20 +23,20 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  gap: 12px;
+  padding: var(--space-6);
+  gap: var(--space-4);
 }
 
 .loading-icon {
-  width: 32px;
-  height: 32px;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
 
 .loading-message {
-  font-size: 11px;
-  color: #000;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
 }
 </style>

@@ -15,22 +15,23 @@ export default {
 <style scoped>
 .nav-bar {
   display: flex;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
   align-items: center;
 }
 
 .back-link {
-  color: #000080;
+  color: var(--color-primary);
   text-decoration: underline;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  transition: var(--transition-fast);
 }
 
 .back-link:hover {
-  color: #0000FF;
+  color: var(--color-primary-light);
 }
 </style>

@@ -1,0 +1,238 @@
+/* styles/design-tokens.css */
+:root {
+    /* =============================================================================
+       WINDOWS 97 DESIGN SYSTEM - DESIGN TOKENS
+       ============================================================================= */
+
+    /* =============================================================================
+         COLORS - Windows 97 Authentic Palette
+         ============================================================================= */
+
+    /* Primary Colors */
+    --color-primary: #000080;              /* Windows blue */
+    --color-primary-light: #1084d0;        /* Lighter blue for gradients */
+    --color-primary-dark: #000060;         /* Darker blue for depth */
+
+    /* Neutral Colors */
+    --color-gray-100: #ffffff;             /* White highlights */
+    --color-gray-200: #c0c0c0;             /* Main gray background */
+    --color-gray-300: #808080;             /* Disabled text/elements */
+    --color-gray-400: #404040;             /* Dark gray */
+    --color-gray-500: #000000;             /* Black borders/text */
+
+    /* Semantic Colors */
+    --color-success: #008000;              /* Success green */
+    --color-warning: #808000;              /* Warning yellow-brown */
+    --color-error: #800000;                /* Error dark red */
+    --color-info: #000080;                 /* Info blue (same as primary) */
+
+    /* Background Colors */
+    --color-bg-primary: var(--color-gray-200);
+    --color-bg-secondary: var(--color-gray-100);
+    --color-bg-tertiary: var(--color-gray-300);
+
+    /* Text Colors */
+    --color-text-primary: var(--color-gray-500);
+    --color-text-secondary: var(--color-gray-300);
+    --color-text-inverse: var(--color-gray-100);
+    --color-text-disabled: var(--color-gray-300);
+
+    /* =============================================================================
+         TYPOGRAPHY - Authentic Windows 97 Fonts
+         ============================================================================= */
+
+    /* Font Families */
+    --font-family-primary: "MS Sans Serif", "Courier", Arial, sans-serif;
+    --font-family-secondary: Arial, sans-serif;
+    --font-family-mono: "Courier New", "Courier", monospace;
+
+    /* Font Sizes (Windows 97 authentic sizes) */
+    --font-size-xs: 8px;                   /* Very small text */
+    --font-size-sm: 11px;                  /* Standard Windows 97 size */
+    --font-size-base: 12px;                /* Base size */
+    --font-size-md: 14px;                  /* Medium text */
+    --font-size-lg: 16px;                  /* Large text */
+    --font-size-xl: 18px;                  /* Extra large */
+    --font-size-2xl: 24px;                 /* Headings */
+
+    /* Line Heights */
+    --line-height-tight: 1.1;
+    --line-height-base: 1.2;
+    --line-height-relaxed: 1.4;
+
+    /* Font Weights */
+    --font-weight-normal: 400;
+    --font-weight-bold: 700;
+
+    /* =============================================================================
+         SPACING - Consistent spacing scale
+         ============================================================================= */
+
+    --space-0: 0;
+    --space-1: 2px;                        /* Micro spacing */
+    --space-2: 4px;                        /* Small spacing */
+    --space-3: 8px;                        /* Base spacing */
+    --space-4: 12px;                       /* Medium spacing */
+    --space-5: 16px;                       /* Large spacing */
+    --space-6: 20px;                       /* Extra large spacing */
+    --space-7: 24px;                       /* 2x large spacing */
+    --space-8: 32px;                       /* 3x large spacing */
+
+    /* =============================================================================
+         BORDERS - Windows 97 3D Border Effects
+         ============================================================================= */
+
+    /* Border Widths */
+    --border-width-thin: 1px;
+    --border-width-base: 2px;
+    --border-width-thick: 3px;
+
+    /* 3D Border Styles - Raised (buttons, windows) */
+    --border-raised: var(--border-width-base) solid;
+    --border-raised-top: var(--color-gray-100);
+    --border-raised-left: var(--color-gray-100);
+    --border-raised-right: var(--color-gray-500);
+    --border-raised-bottom: var(--color-gray-500);
+
+    /* 3D Border Styles - Inset (inputs, text areas) */
+    --border-inset: var(--border-width-base) solid;
+    --border-inset-top: var(--color-gray-500);
+    --border-inset-left: var(--color-gray-500);
+    --border-inset-right: var(--color-gray-100);
+    --border-inset-bottom: var(--color-gray-100);
+
+    /* =============================================================================
+         SHADOWS - Subtle Windows 97 shadow effects
+         ============================================================================= */
+
+    --shadow-small: 1px 1px 0 var(--color-gray-500);
+    --shadow-medium: 2px 2px 0 var(--color-gray-500);
+    --shadow-large: 1px 1px 0 var(--color-gray-500), 2px 2px 0 var(--color-gray-400);
+
+    /* =============================================================================
+         COMPONENT TOKENS - Specific component styling
+         ============================================================================= */
+
+    /* Buttons */
+    --btn-bg: var(--color-gray-200);
+    --btn-padding-x: 12px;
+    --btn-padding-y: 4px;
+    --btn-font-size: var(--font-size-sm);
+    --btn-font-family: var(--font-family-primary);
+    --btn-border-width: var(--border-width-base);
+    --btn-focus-outline: 1px dotted var(--color-gray-500);
+    --btn-focus-offset: -4px;
+
+    /* Inputs */
+    --input-bg: var(--color-gray-100);
+    --input-padding-x: 4px;
+    --input-padding-y: 2px;
+    --input-font-size: var(--font-size-sm);
+    --input-font-family: var(--font-family-primary);
+    --input-border-width: var(--border-width-base);
+
+    /* Windows */
+    --window-bg: var(--color-gray-200);
+    --window-header-bg: linear-gradient(to right, var(--color-primary), var(--color-primary-light));
+    --window-header-color: var(--color-text-inverse);
+    --window-border-width: var(--border-width-base);
+    --window-shadow: var(--shadow-small);
+    --window-padding: var(--space-3);
+    --window-header-padding: var(--space-1) var(--space-2);
+
+    /* Icons */
+    --icon-size-sm: 16px;
+    --icon-size-base: 24px;
+    --icon-size-lg: 32px;
+    --icon-size-xl: 48px;
+
+    /* Grid and Layout */
+    --grid-gap: var(--space-6);
+    --container-max-width: 800px;
+    --container-padding: var(--space-6);
+
+    /* =============================================================================
+         SCROLLBARS - Windows 97 Style Scrollbars
+         ============================================================================= */
+
+    --scrollbar-width: 16px;
+    --scrollbar-bg: var(--color-gray-200);
+    --scrollbar-border: 1px solid var(--color-gray-500);
+    --scrollbar-thumb-bg: var(--color-gray-200);
+    --scrollbar-button-size: 16px;
+
+    /* =============================================================================
+         ANIMATIONS - Subtle interactions
+         ============================================================================= */
+
+    --transition-fast: 0.1s ease;
+    --transition-base: 0.2s ease;
+    --transition-slow: 0.3s ease;
+
+    /* =============================================================================
+         BREAKPOINTS - Responsive design tokens
+         ============================================================================= */
+
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+}
+
+/* =============================================================================
+   UTILITY CLASSES - Common patterns
+   ============================================================================= */
+
+/* Typography Utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-md { font-size: var(--font-size-md); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+
+.font-primary { font-family: var(--font-family-primary); }
+.font-secondary { font-family: var(--font-family-secondary); }
+.font-mono { font-family: var(--font-family-mono); }
+
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* Spacing Utilities */
+.p-0 { padding: var(--space-0); }
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+
+.m-0 { margin: var(--space-0); }
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-5 { margin: var(--space-5); }
+
+/* Border Utilities */
+.border-raised {
+  border: var(--border-raised);
+  border-top-color: var(--border-raised-top);
+  border-left-color: var(--border-raised-left);
+  border-right-color: var(--border-raised-right);
+  border-bottom-color: var(--border-raised-bottom);
+}
+
+.border-inset {
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
+}
+
+/* Color Utilities */
+.bg-primary { background-color: var(--color-bg-primary); }
+.bg-secondary { background-color: var(--color-bg-secondary); }
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }

@@ -39,25 +39,29 @@ export default {
 
 <style scoped>
 .about-content {
-  padding: 16px;
-  background-color: #fff;
-  border: 1px inset #000;
-  margin-top: 16px;
+  padding: var(--space-5);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
+  margin-top: var(--space-5);
 }
 
 h2 {
-  font-size: 14px;
-  margin-bottom: 12px;
+  font-size: var(--font-size-md);
+  margin-bottom: var(--space-4);
 }
 
 p {
-  line-height: 1.6;
-  margin-bottom: 16px;
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-5);
 }
 
 .about-icon {
   text-align: center;
-  margin-top: 24px;
+  margin-top: var(--space-7);
 }
 
 .about-icon img {

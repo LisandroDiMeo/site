@@ -27,36 +27,37 @@ export default {
 
 <style scoped>
 .btn {
-  background-color: #c0c0c0;
-  border: 2px solid;
-  border-top-color: #fff;
-  border-left-color: #fff;
-  border-right-color: #000;
-  border-bottom-color: #000;
-  padding: 4px 12px;
-  font-size: 11px;
-  font-family: "MS Sans Serif", Arial, sans-serif;
+  background-color: var(--btn-bg);
+  border: var(--border-raised);
+  border-top-color: var(--border-raised-top);
+  border-left-color: var(--border-raised-left);
+  border-right-color: var(--border-raised-right);
+  border-bottom-color: var(--border-raised-bottom);
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  font-size: var(--btn-font-size);
+  font-family: var(--btn-font-family);
   cursor: pointer;
   outline: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-2);
+  transition: var(--transition-fast);
 }
 
 .btn:active:not(:disabled) {
-  border-top-color: #000;
-  border-left-color: #000;
-  border-right-color: #fff;
-  border-bottom-color: #fff;
+  border-top-color: var(--border-raised-bottom);
+  border-left-color: var(--border-raised-bottom);
+  border-right-color: var(--border-raised-top);
+  border-bottom-color: var(--border-raised-top);
 }
 
 .btn:focus {
-  outline: 1px dotted #000;
-  outline-offset: -4px;
+  outline: var(--btn-focus-outline);
+  outline-offset: var(--btn-focus-offset);
 }
 
 .btn:disabled {
-  color: #808080;
+  color: var(--color-text-disabled);
   cursor: not-allowed;
 }
 </style>

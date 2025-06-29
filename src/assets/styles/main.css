@@ -15,12 +15,11 @@ body {
   margin: 0;
   padding: 20px;
   background-color: #008080;
-  font-family: "MS Sans Serif", Arial, sans-serif;
+  font-family: "Courier", Arial, sans-serif;
   font-size: 11px;
   color: #000;
   -webkit-font-smoothing: none;
-  -moz-osx-font-smoothing: none;
-  font-smooth: never;
+  -moz-osx-font-smoothing: auto;
 }
 
 #app {

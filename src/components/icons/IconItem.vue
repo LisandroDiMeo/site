@@ -56,33 +56,34 @@ export default {
   align-items: center;
   cursor: pointer;
   text-align: center;
-  padding: 8px;
-  border: 1px solid transparent;
+  padding: var(--space-3);
+  border: var(--border-width-thin) solid transparent;
   user-select: none;
+  transition: var(--transition-fast);
 }
 
 .icon-item:hover {
-  background-color: #000080;
-  color: #fff;
-  border: 1px dotted #fff;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: var(--border-width-thin) dotted var(--color-text-inverse);
 }
 
 .icon-item:active {
-  background-color: #000080;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 
 .icon-image {
-  width: 32px;
-  height: 32px;
-  margin-bottom: 4px;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  margin-bottom: var(--space-2);
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
 
 .icon-label {
-  font-size: 11px;
+  font-size: var(--font-size-sm);
   word-break: break-word;
   max-width: 64px;
 }

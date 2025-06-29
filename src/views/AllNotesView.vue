@@ -85,19 +85,19 @@ export default {
 <style scoped>
 .loading-header {
   position: absolute;
-  top: 40px;
-  right: 20px;
+  top: var(--space-8);
+  right: var(--space-6);
 }
 
 .loading-icon {
-  width: 32px;
-  height: 32px;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
   image-rendering: pixelated;
 }
 
 h3 {
-  font-size: 14px;
-  margin: 16px 0;
-  font-weight: bold;
+  font-size: var(--font-size-md);
+  margin: var(--space-5) 0;
+  font-weight: var(--font-weight-bold);
 }
 </style>

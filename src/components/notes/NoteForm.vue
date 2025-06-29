@@ -97,29 +97,33 @@ export default {
 
 <style scoped>
 .note-form {
-  background-color: #c0c0c0;
-  padding: 16px;
+  background-color: var(--color-bg-primary);
+  padding: var(--space-5);
 }
 
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: var(--space-4);
 }
 
 label {
   display: block;
-  margin-bottom: 4px;
-  font-weight: bold;
-  font-size: 11px;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
 }
 
 .input-field,
 .textarea-field {
   width: 100%;
-  padding: 4px;
-  border: 2px inset #fff;
-  background-color: #fff;
-  font-family: "MS Sans Serif", Arial, sans-serif;
-  font-size: 11px;
+  padding: var(--input-padding-y) var(--input-padding-x);
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
+  background-color: var(--input-bg);
+  font-family: var(--input-font-family);
+  font-size: var(--input-font-size);
   outline: none;
 }
 
@@ -130,13 +134,13 @@ label {
 
 .button-group {
   display: flex;
-  gap: 8px;
-  margin-top: 16px;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
 }
 
 .btn-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
   vertical-align: middle;
   image-rendering: pixelated;
 }

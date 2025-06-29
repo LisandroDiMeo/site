@@ -116,16 +116,20 @@ export default {
 
 <style scoped>
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: var(--space-4);
 }
 
 .textarea-field {
   width: 100%;
-  padding: 4px;
-  border: 2px inset #fff;
-  background-color: #fff;
-  font-family: inherit;
-  font-size: 11px;
+  padding: var(--input-padding-y) var(--input-padding-x);
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
+  background-color: var(--input-bg);
+  font-family: var(--input-font-family);
+  font-size: var(--input-font-size);
   outline: none;
   min-height: 100px;
   resize: vertical;
@@ -134,29 +138,29 @@ export default {
 .success-message {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background-color: #fff;
-  border: 1px solid #000;
-  padding: 16px;
-  margin: 20px 0;
+  gap: var(--space-4);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-width-thin) solid var(--color-gray-500);
+  padding: var(--space-5);
+  margin: var(--space-6) 0;
 }
 
 .success-icon {
-  width: 32px;
-  height: 32px;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
   image-rendering: pixelated;
 }
 
 .btn-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
   vertical-align: middle;
-  margin-right: 4px;
+  margin-right: var(--space-2);
   image-rendering: pixelated;
 }
 
 .button-group {
   display: flex;
-  gap: 8px;
+  gap: var(--space-3);
 }
 </style>
