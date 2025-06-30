@@ -3,10 +3,37 @@
     <NavigationBar @back="goBack" />
     <div class="about-content">
       <h2>About Me</h2>
-      <p>Hello! I'm Lisandro. I'm just a regular person.</p>
-      
-      <div class="about-icon">
-        <img src="/assets/person_doc.png" alt="About me icon">
+      <p>
+        I'm Lisandro Diaz Di Meo, a Computer Scientist who graduated from Universidad de Buenos Aires.
+        I'm currently working as a Senior Mobile Engineer at <a href="https://qubika.com/" target="_blank" rel="noopener noreferrer">Qubika</a>.
+      </p>
+
+      <p>
+        I'm passionate about creating software that truly serves people. Through my diverse experience,
+        I bring valuable insights to different types of teams, offering a unique perspective that bridges
+        both technical excellence and thoughtful product design.
+      </p>
+
+      <p>
+        At the moment, I'm focused on developing AI agents for automated test generation.
+        My primary interests lie in various software analysis techniques that support and enhance
+        the software development process. This includes approaches like dynamic and static analysis,
+        fuzzing, search-based software engineering, and related methodologies.
+      </p>
+
+      <p>
+        When I'm not coding, I enjoy music, reading, writing, <RouterLink to="photos">photography</RouterLink>,
+        teaching, and spending quality time with my family and friends :)
+      </p>
+
+      <p>
+        For professional connections or any inquiries, you can find me on
+        <a href="https://www.linkedin.com/in/lisandrodimeo" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        or GitHub.
+      </p>
+
+      <div class="me">
+        <img src="/assets/me.jpg" alt="Me!">
       </div>
     </div>
   </WindowFrame>
@@ -25,13 +52,17 @@ export default {
   },
   setup() {
     const router = useRouter()
-    
+
     const goBack = () => {
       router.push({ name: 'home' })
     }
-    
+
+    const navigateTo = (route) => {
+      router.push({ name: route })
+    }
+
     return {
-      goBack
+      goBack, navigateTo
     }
   }
 }
@@ -59,14 +90,17 @@ p {
   margin-bottom: var(--space-5);
 }
 
-.about-icon {
+a {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+}
+
+.me {
   text-align: center;
   margin-top: var(--space-7);
 }
 
-.about-icon img {
-  width: 64px;
-  height: 64px;
-  image-rendering: pixelated;
+.me img {
+  width: 50%;
 }
 </style>
