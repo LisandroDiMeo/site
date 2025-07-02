@@ -4,7 +4,7 @@
     <div class="about-content">
       <h2>About Me</h2>
       <p>
-        I'm Lisandro Diaz Di Meo, a Computer Scientist who graduated from Universidad de Buenos Aires.
+        I'm Lisandro Diaz Di Meo, a Computer Scientist who's graduated from Universidad de Buenos Aires.
         I'm currently working as a Senior Mobile Engineer at <a href="https://qubika.com/" target="_blank" rel="noopener noreferrer">Qubika</a>.
       </p>
 

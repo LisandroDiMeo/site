@@ -32,6 +32,30 @@ export default {
     return {
       goBack
     }
+  },
+  async mounted() {
+    await this.loadPhotoStructure();
+  },
+  methods: {
+    async loadPhotoStructure() {
+      try {
+        this.loading = true;
+        const response = await fetch('/photo-index.json');
+
+        if (!response.ok) {
+          throw new Error('Failed to load photo index');
+        }
+
+        this.photoStructure = await response.json();
+        this.currentDirectories = this.photoStructure.subdirs || [];
+
+      } catch (error) {
+        console.error('Failed to load photo structure:', error);
+        this.error = 'Failed to load photos. Please try again.';
+      } finally {
+        this.loading = false;
+      }
+    }
   }
 }
 </script>
