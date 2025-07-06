@@ -3,14 +3,14 @@
     <NavigationBar @back="goBack" />
     <div class="blank-content">
       <div class="path-navigation">
-        <span 
-          v-for="(segment, index) in pathSegments" 
-          :key="index"
-          class="path-segment"
+        <span
+            v-for="(segment, index) in pathSegments"
+            :key="index"
+            class="path-segment"
         >
-          <span 
-            class="path-link" 
-            @click="navigateToPath(index)"
+          <span
+              class="path-link"
+              @click="navigateToPath(index)"
           >{{ segment || 'Root' }}</span>
           <span v-if="index < pathSegments.length - 1"> / </span>
         </span>
@@ -23,39 +23,40 @@
       <div v-else class="items-container">
         <!-- Directories -->
         <IconItem
-          v-for="directory in currentDirectories"
-          :key="directory"
-          icon="/assets/closedfolder.png"
-          hoverIcon="/assets/openfolder.png"
-          :label="directory"
-          @click="navigateToDirectory(directory)"
+            v-for="directory in currentDirectories"
+            :key="directory"
+            icon="/assets/closedfolder.png"
+            hoverIcon="/assets/openfolder.png"
+            :label="directory"
+            @click="navigateToDirectory(directory)"
         />
 
         <!-- Photos -->
         <PhotoThumbnail
-          v-for="photo in currentPhotos"
-          :key="photo.name"
-          :photo="photo"
-          :currentPath="currentPath"
-          @click="openPhotoModal(photo)"
+            v-for="photo in currentPhotos"
+            :key="photo.name"
+            :photo="photo"
+            :currentPath="currentPath"
+            @click="openPhotoModal(photo)"
         />
+        <div v-if="hasMorePhotos" class="load-more-trigger"></div>
       </div>
 
       <!-- Photo Modal -->
       <PhotoModal
-        :show="showModal"
-        :photos="currentPhotos"
-        :currentPhoto="selectedPhoto"
-        :currentPath="currentPath"
-        @close="closePhotoModal"
-        @navigate="navigatePhoto"
+          :show="showModal"
+          :photos="currentPhotos"
+          :currentPhoto="selectedPhoto"
+          :currentPath="currentPath"
+          @close="closePhotoModal"
+          @navigate="navigatePhoto"
       />
     </div>
   </WindowFrame>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import WindowFrame from '@/components/common/WindowFrame.vue'
 import NavigationBar from '@/components/common/NavigationBar.vue'
@@ -79,6 +80,8 @@ export default {
     const currentPath = ref('')
     const showModal = ref(false)
     const selectedPhoto = ref(null)
+    const batchSize = 20 // Number of photos to load at once
+    const currentBatch = ref(1)
 
     const pathSegments = computed(() => {
       return currentPath.value.split('/').filter(Boolean)
@@ -86,14 +89,14 @@ export default {
 
     const getCurrentNode = () => {
       if (!photoStructure.value) return null
-      
+
       if (!currentPath.value) {
         return photoStructure.value
       }
-      
+
       let node = photoStructure.value
       const segments = currentPath.value.split('/').filter(Boolean)
-      
+
       for (const segment of segments) {
         if (node.children && node.children[segment]) {
           node = node.children[segment]
@@ -102,7 +105,7 @@ export default {
           return null
         }
       }
-      
+
       return node
     }
 
@@ -111,10 +114,25 @@ export default {
       return node ? node.subdirs || [] : []
     })
 
-    const currentPhotos = computed(() => {
+    const allPhotos = computed(() => {
       const node = getCurrentNode()
       return node ? (node.file_details || []) : []
     })
+
+    const currentPhotos = computed(() => {
+      const endIndex = currentBatch.value * batchSize
+      return allPhotos.value.slice(0, endIndex)
+    })
+
+    const hasMorePhotos = computed(() => {
+      return currentPhotos.value.length < allPhotos.value.length
+    })
+
+    const loadMorePhotos = () => {
+      if (hasMorePhotos.value) {
+        currentBatch.value++
+      }
+    }
 
     const loadPhotoStructure = async () => {
       try {
@@ -135,8 +153,9 @@ export default {
 
     const navigateToDirectory = (directory) => {
       currentPath.value = currentPath.value
-        ? `${currentPath.value}/${directory}`
-        : directory
+          ? `/${directory}`
+          : directory
+      currentBatch.value = 1 // Reset batch when changing directory
     }
 
     const navigateToPath = (index) => {
@@ -168,8 +187,29 @@ export default {
       selectedPhoto.value = photo
     }
 
-    // Load photo structure on component mount
-    loadPhotoStructure()
+    // Add intersection observer for infinite scroll
+    const setupInfiniteScroll = () => {
+      const observer = new IntersectionObserver((entries) => {
+        const target = entries[0]
+        if (target.isIntersecting && hasMorePhotos.value && !loading.value) {
+          loadMorePhotos()
+        }
+      }, {
+        rootMargin: '100px'
+      })
+
+      const loadMoreTrigger = document.querySelector('.load-more-trigger')
+      if (loadMoreTrigger) {
+        observer.observe(loadMoreTrigger)
+      }
+
+      return () => observer.disconnect()
+    }
+
+    onMounted(() => {
+      loadPhotoStructure()
+      setupInfiniteScroll()
+    })
 
     return {
       currentPath,
@@ -179,12 +219,14 @@ export default {
       loading,
       showModal,
       selectedPhoto,
+      hasMorePhotos,
       navigateToDirectory,
       navigateToPath,
       goBack,
       openPhotoModal,
       closePhotoModal,
-      navigatePhoto
+      navigatePhoto,
+      loadMorePhotos
     }
   }
 }
@@ -239,5 +281,12 @@ export default {
   flex-wrap: wrap;
   gap: var(--space-4);
   padding: var(--space-4);
+}
+
+.load-more-trigger {
+  width: 100%;
+  height: 20px;
+  margin-top: var(--space-4);
+  visibility: hidden;
 }
 </style>
