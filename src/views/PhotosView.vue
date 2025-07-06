@@ -3,10 +3,14 @@
     <NavigationBar @back="goBack" />
     <div class="blank-content">
       <h2>Photos</h2>
-      <p>This page is under construction.</p>
-      <div class="construction-icon">
-        <img src="/assets/closedfolder.png" alt="Under construction">
-      </div>
+      <IconItem
+          v-for="directory in currentDirectories"
+          :key="directory"
+          icon="/assets/closedfolder.png"
+          hoverIcon="/assets/openfolder.png"
+          :label="directory"
+          @click=""
+      />
     </div>
   </WindowFrame>
 </template>
@@ -15,12 +19,19 @@
 import { useRouter } from 'vue-router'
 import WindowFrame from '@/components/common/WindowFrame.vue'
 import NavigationBar from '@/components/common/NavigationBar.vue'
+import IconItem from "@/components/icons/IconItem.vue";
 
 export default {
   name: 'PhotosView',
   components: {
+    IconItem,
     WindowFrame,
     NavigationBar
+  },
+  data() {
+    return {
+      currentDirectories: []
+    }
   },
   setup() {
     const router = useRouter()
