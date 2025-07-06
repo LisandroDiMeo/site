@@ -1,25 +1,27 @@
 <template>
   <WindowFrame title="notes">
     <NavigationBar @back="goBack" />
-    
-    <div class="icon-grid">
-      <IconItem
-        icon="/assets/writenote.png"
-        label="write note"
-        @click="navigateTo('write-note')"
-      />
-      <IconItem
-        icon="/assets/notepad.png"
-        label="all notes"
-        @click="navigateTo('all-notes')"
-      />
-      <IconItem
-        icon="/assets/closedfolder.png"
-        hoverIcon="/assets/openfolder.png"
-        label="notes by group"
-        @click="navigateTo('notes-by-group')"
-      />
+    <div class="blank-content">
+      <div class="icon-grid">
+        <IconItem
+            icon="/assets/writenote.png"
+            label="write note"
+            @click="navigateTo('write-note')"
+        />
+        <IconItem
+            icon="/assets/notepad.png"
+            label="all notes"
+            @click="navigateTo('all-notes')"
+        />
+        <IconItem
+            icon="/assets/closedfolder.png"
+            hoverIcon="/assets/openfolder.png"
+            label="notes by group"
+            @click="navigateTo('notes-by-group')"
+        />
+      </div>
     </div>
+
   </WindowFrame>
 </template>
 
@@ -56,6 +58,18 @@ export default {
 </script>
 
 <style scoped>
+
+.blank-content {
+  padding: var(--space-5);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
+  margin-top: var(--space-5);
+}
+
 .icon-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));

@@ -89,7 +89,7 @@ export default {
     const currentPath = ref('')
     const showModal = ref(false)
     const selectedPhoto = ref(null)
-    const batchSize = 20 // Increased batch size for better performance
+    const batchSize = 10
     const currentBatch = ref(1)
     const loadMoreTrigger = ref(null)
     const photosGrid = ref(null)
@@ -130,6 +130,7 @@ export default {
 
     const allPhotos = computed(() => {
       const node = getCurrentNode()
+      console.log(node)
       return node ? (node.file_details || []) : []
     })
 
@@ -173,12 +174,12 @@ export default {
 
     const navigateToDirectory = (directory) => {
       // Reset states
-      const newPath = currentPath.value ? `/${directory}` : directory
+      const newPath = currentPath.value ? `${currentPath.value}/${directory}` : directory
       currentPath.value = newPath
       currentBatch.value = 1
       loadedImagesCount.value = 0
       
-      console.log('Navigating to directory:', newPath) // Debug log
+      console.log('Navigating to directory:', newPath)
       
       // Clean up observer
       if (observer) {
@@ -330,7 +331,7 @@ export default {
 .path-navigation {
   background-color: var(--color-bg-primary);
   padding: var(--space-2) var(--space-4);
-  border: var(--border-primary);
+  border: var(--border-raised);
   margin-bottom: var(--space-4);
 }
 
@@ -340,7 +341,7 @@ export default {
 
 .path-link {
   cursor: pointer;
-  color: var(--color-text-link);
+  color: var(--color-info);
 }
 
 .path-link:hover {

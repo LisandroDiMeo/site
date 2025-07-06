@@ -1,5 +1,6 @@
 <template>
   <WindowFrame title="Lisandro's Files">
+    <div class="blank-content">
     <div class="icon-grid">
       <IconItem
         icon="/assets/closedfolder.png"
@@ -18,6 +19,7 @@
         label="about me"
         @click="navigateTo('about')"
       />
+    </div>
     </div>
   </WindowFrame>
 </template>
@@ -53,5 +55,16 @@ export default {
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: var(--grid-gap);
   padding: var(--container-padding);
+}
+
+.blank-content {
+  padding: var(--space-5);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-inset);
+  border-top-color: var(--border-inset-top);
+  border-left-color: var(--border-inset-left);
+  border-right-color: var(--border-inset-right);
+  border-bottom-color: var(--border-inset-bottom);
+  margin-top: var(--space-5);
 }
 </style>

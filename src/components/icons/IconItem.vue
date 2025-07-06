@@ -1,7 +1,7 @@
 <template>
-  <div class="icon-item" @click="handleClick" @dblclick="handleDoubleClick" @mouseover="isHovered = true" @mouseleave="isHovered = false">
+  <div class="icon-item" @mouseover="isHovered = true" @mouseleave="isHovered = false">
     <img 
-      :src="isHovered && hoverIcon != '' ? hoverIcon : icon"
+      :src="isHovered && hoverIcon !== '' ? hoverIcon : icon"
       :alt="label" 
       class="icon-image">
     <span class="icon-label">{{ label }}</span>
@@ -20,10 +20,6 @@ export default {
       type: String,
       required: true
     },
-    doubleClick: {
-      type: Boolean,
-      default: false
-    },
     hoverIcon: {
       type: String,
       default: ''
@@ -34,18 +30,6 @@ export default {
       isHovered: false
     }
   },
-  methods: {
-    handleClick() {
-      if (!this.doubleClick) {
-        this.$emit('click')
-      }
-    },
-    handleDoubleClick() {
-      if (this.doubleClick) {
-        this.$emit('click')
-      }
-    }
-  }
 }
 </script>
 

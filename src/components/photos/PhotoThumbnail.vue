@@ -51,8 +51,6 @@ export default {
       }
       basePath += `/${this.photo.name}`
       
-      console.log('Loading image from:', basePath) // Debug log
-      
       return basePath
     }
   },
@@ -101,9 +99,7 @@ export default {
 .thumbnail-container {
   width: 100px;
   height: 100px;
-  border: var(--border-primary);
   padding: var(--space-2);
-  background-color: var(--color-bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,8 +134,6 @@ export default {
   max-height: 90px;
   object-fit: contain;
   image-rendering: pixelated;
-  /* Optimize image rendering */
-  image-rendering: -webkit-optimize-contrast;
   backface-visibility: hidden;
   transform: translateZ(0);
 }
@@ -155,7 +149,8 @@ export default {
 }
 
 .photo-thumbnail:hover .thumbnail-container:not(.is-loading) {
-  border-color: var(--color-border-hover);
-  background-color: var(--color-bg-hover);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: var(--border-width-thin) dotted var(--color-text-inverse);
 }
 </style>

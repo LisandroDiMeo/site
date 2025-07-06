@@ -7,23 +7,21 @@
       </div>
       
       <div class="modal-body">
-        <button 
-          class="nav-button prev" 
-          @click="navigatePhotos(-1)"
-          :disabled="currentIndex === 0"
-        >←</button>
-        
         <img :src="photoPath" :alt="currentPhoto.name" class="modal-image">
-        
-        <button 
-          class="nav-button next" 
-          @click="navigatePhotos(1)"
-          :disabled="currentIndex === photos.length - 1"
-        >→</button>
       </div>
       
       <div class="modal-footer">
+        <button
+            class="nav-button prev"
+            @click="navigatePhotos(-1)"
+            :disabled="currentIndex === 0"
+        >←</button>
         <span>{{ currentIndex + 1 }} of {{ photos.length }}</span>
+        <button
+            class="nav-button next"
+            @click="navigatePhotos(1)"
+            :disabled="currentIndex === photos.length - 1"
+        >→</button>
       </div>
     </div>
   </div>
@@ -88,7 +86,7 @@ export default {
 
 .modal-content {
   background-color: var(--color-bg-primary);
-  border: var(--border-primary);
+  border: var(--border-raised);
   border-width: 2px;
   max-width: 90vw;
   max-height: 90vh;
@@ -97,7 +95,7 @@ export default {
 }
 
 .modal-header {
-  background-color: var(--color-bg-header);
+  background-color: var(--color-bg-tertiary);
   padding: var(--space-2) var(--space-4);
   display: flex;
   justify-content: space-between;
@@ -133,7 +131,7 @@ export default {
 
 .nav-button {
   background-color: var(--color-bg-primary);
-  border: var(--border-primary);
+  border: var(--border-inset);
   padding: var(--space-2) var(--space-4);
   cursor: pointer;
   font-size: var(--font-size-lg);
@@ -145,8 +143,12 @@ export default {
 }
 
 .modal-footer {
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-4);
   text-align: center;
-  border-top: var(--border-primary);
+  border-top: var(--border-inset);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
 }
 </style> 
