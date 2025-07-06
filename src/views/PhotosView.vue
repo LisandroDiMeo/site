@@ -3,14 +3,14 @@
     <NavigationBar @back="goBack" />
     <div class="blank-content">
       <div class="path-navigation">
-        <span
-            v-for="(segment, index) in pathSegments"
-            :key="index"
-            class="path-segment"
+        <span 
+          v-for="(segment, index) in pathSegments" 
+          :key="index"
+          class="path-segment"
         >
-          <span
-              class="path-link"
-              @click="navigateToPath(index)"
+          <span 
+            class="path-link" 
+            @click="navigateToPath(index)"
           >{{ segment || 'Root' }}</span>
           <span v-if="index < pathSegments.length - 1"> / </span>
         </span>
@@ -22,41 +22,50 @@
 
       <div v-else class="items-container">
         <!-- Directories -->
-        <IconItem
+        <div v-if="currentDirectories.length > 0" class="directories-section">
+          <IconItem
             v-for="directory in currentDirectories"
             :key="directory"
             icon="/assets/closedfolder.png"
             hoverIcon="/assets/openfolder.png"
             :label="directory"
             @click="navigateToDirectory(directory)"
-        />
+          />
+        </div>
 
-        <!-- Photos -->
-        <PhotoThumbnail
+        <!-- Photos with Virtual Scrolling -->
+        <div v-if="currentPhotos.length > 0" class="photos-grid" ref="photosGrid">
+          <PhotoThumbnail
             v-for="photo in currentPhotos"
-            :key="photo.name"
+            :key="`${currentPath}-${photo.name}`"
             :photo="photo"
             :currentPath="currentPath"
             @click="openPhotoModal(photo)"
-        />
-        <div v-if="hasMorePhotos" class="load-more-trigger"></div>
+            @imageLoaded="handleImageLoaded"
+          />
+        </div>
+      </div>
+
+      <!-- Load More Trigger -->
+      <div v-if="hasMorePhotos && !loading" ref="loadMoreTrigger" class="load-more-trigger">
+        <img src="/assets/hourglass.gif" alt="Loading more..." class="loading-icon">
       </div>
 
       <!-- Photo Modal -->
       <PhotoModal
-          :show="showModal"
-          :photos="currentPhotos"
-          :currentPhoto="selectedPhoto"
-          :currentPath="currentPath"
-          @close="closePhotoModal"
-          @navigate="navigatePhoto"
+        :show="showModal"
+        :photos="currentPhotos"
+        :currentPhoto="selectedPhoto"
+        :currentPath="currentPath"
+        @close="closePhotoModal"
+        @navigate="navigatePhoto"
       />
     </div>
   </WindowFrame>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import WindowFrame from '@/components/common/WindowFrame.vue'
 import NavigationBar from '@/components/common/NavigationBar.vue'
@@ -80,8 +89,13 @@ export default {
     const currentPath = ref('')
     const showModal = ref(false)
     const selectedPhoto = ref(null)
-    const batchSize = 20 // Number of photos to load at once
+    const batchSize = 20 // Increased batch size for better performance
     const currentBatch = ref(1)
+    const loadMoreTrigger = ref(null)
+    const photosGrid = ref(null)
+    const loadedImagesCount = ref(0)
+    let observer = null
+    let loadingMorePhotos = ref(false)
 
     const pathSegments = computed(() => {
       return currentPath.value.split('/').filter(Boolean)
@@ -89,14 +103,14 @@ export default {
 
     const getCurrentNode = () => {
       if (!photoStructure.value) return null
-
+      
       if (!currentPath.value) {
         return photoStructure.value
       }
-
+      
       let node = photoStructure.value
       const segments = currentPath.value.split('/').filter(Boolean)
-
+      
       for (const segment of segments) {
         if (node.children && node.children[segment]) {
           node = node.children[segment]
@@ -105,7 +119,7 @@ export default {
           return null
         }
       }
-
+      
       return node
     }
 
@@ -129,8 +143,14 @@ export default {
     })
 
     const loadMorePhotos = () => {
-      if (hasMorePhotos.value) {
-        currentBatch.value++
+      if (hasMorePhotos.value && !loadingMorePhotos.value) {
+        loadingMorePhotos.value = true
+        
+        // Use requestAnimationFrame for smooth loading
+        requestAnimationFrame(() => {
+          currentBatch.value++
+          loadingMorePhotos.value = false
+        })
       }
     }
 
@@ -152,15 +172,40 @@ export default {
     }
 
     const navigateToDirectory = (directory) => {
-      currentPath.value = currentPath.value
-          ? `/${directory}`
-          : directory
-      currentBatch.value = 1 // Reset batch when changing directory
+      // Reset states
+      const newPath = currentPath.value ? `/${directory}` : directory
+      currentPath.value = newPath
+      currentBatch.value = 1
+      loadedImagesCount.value = 0
+      
+      console.log('Navigating to directory:', newPath) // Debug log
+      
+      // Clean up observer
+      if (observer) {
+        observer.disconnect()
+      }
+      
+      // Setup observer again after DOM update
+      nextTick(() => {
+        setupInfiniteScroll()
+      })
     }
 
     const navigateToPath = (index) => {
       const segments = pathSegments.value
       currentPath.value = segments.slice(0, index + 1).join('/')
+      currentBatch.value = 1
+      loadedImagesCount.value = 0
+      
+      // Clean up observer
+      if (observer) {
+        observer.disconnect()
+      }
+      
+      // Setup observer again after DOM update
+      nextTick(() => {
+        setupInfiniteScroll()
+      })
     }
 
     const goBack = () => {
@@ -171,6 +216,8 @@ export default {
       } else {
         router.push({ name: 'home' })
       }
+      currentBatch.value = 1
+      loadedImagesCount.value = 0
     }
 
     const openPhotoModal = (photo) => {
@@ -187,28 +234,60 @@ export default {
       selectedPhoto.value = photo
     }
 
-    // Add intersection observer for infinite scroll
-    const setupInfiniteScroll = () => {
-      const observer = new IntersectionObserver((entries) => {
-        const target = entries[0]
-        if (target.isIntersecting && hasMorePhotos.value && !loading.value) {
-          loadMorePhotos()
-        }
-      }, {
-        rootMargin: '100px'
-      })
-
-      const loadMoreTrigger = document.querySelector('.load-more-trigger')
-      if (loadMoreTrigger) {
-        observer.observe(loadMoreTrigger)
-      }
-
-      return () => observer.disconnect()
+    const handleImageLoaded = (photo) => {
+      loadedImagesCount.value++
+      // Optional: Add progressive loading feedback
     }
 
-    onMounted(() => {
-      loadPhotoStructure()
-      setupInfiniteScroll()
+    // Simplified intersection observer setup
+    const setupInfiniteScroll = () => {
+      if (observer) {
+        observer.disconnect()
+      }
+
+      // Wait for the trigger element to be available
+      const checkForTrigger = () => {
+        if (loadMoreTrigger.value && hasMorePhotos.value) {
+          observer = new IntersectionObserver((entries) => {
+            const target = entries[0]
+            if (target.isIntersecting && hasMorePhotos.value && !loading.value && !loadingMorePhotos.value) {
+              loadMorePhotos()
+            }
+          }, {
+            rootMargin: '200px', // Increased margin for smoother loading
+            threshold: 0.1
+          })
+
+          observer.observe(loadMoreTrigger.value)
+        }
+      }
+
+      // Check immediately and then poll if needed
+      checkForTrigger()
+      
+      // Fallback polling with shorter interval
+      const pollInterval = setInterval(() => {
+        if (loadMoreTrigger.value && hasMorePhotos.value) {
+          checkForTrigger()
+          clearInterval(pollInterval)
+        }
+      }, 100)
+
+      // Clear polling after reasonable time
+      setTimeout(() => clearInterval(pollInterval), 2000)
+    }
+
+    onMounted(async () => {
+      await loadPhotoStructure()
+      nextTick(() => {
+        setupInfiniteScroll()
+      })
+    })
+
+    onUnmounted(() => {
+      if (observer) {
+        observer.disconnect()
+      }
     })
 
     return {
@@ -220,13 +299,17 @@ export default {
       showModal,
       selectedPhoto,
       hasMorePhotos,
+      loadMoreTrigger,
+      photosGrid,
+      loadedImagesCount,
       navigateToDirectory,
       navigateToPath,
       goBack,
       openPhotoModal,
       closePhotoModal,
       navigatePhoto,
-      loadMorePhotos
+      loadMorePhotos,
+      handleImageLoaded
     }
   }
 }
@@ -278,15 +361,40 @@ export default {
 
 .items-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--space-4);
   padding: var(--space-4);
 }
 
+.directories-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-4);
+  /* Optimize for performance */
+  contain: layout style paint;
+}
+
 .load-more-trigger {
   width: 100%;
-  height: 20px;
+  height: 40px;
   margin-top: var(--space-4);
-  visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Add media queries for responsive grid */
+@media (max-width: 768px) {
+  .photos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: var(--space-2);
+  }
 }
 </style>
