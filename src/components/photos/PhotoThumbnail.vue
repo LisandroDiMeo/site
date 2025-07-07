@@ -10,8 +10,7 @@
       <img v-else-if="imageUrl && !error"
            :src="imageUrl"
            :alt="photo.name"
-           class="thumbnail-image"
-           :class="{'loaded': true}"
+           class="thumbnail-image loaded"
       >
 
       <!-- Error state -->
@@ -177,12 +176,13 @@ export default {
 
 <style scoped>
 .photo-thumbnail {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  margin: var(--space-3);
+  justify-content: flex-start;
   cursor: pointer;
   width: 120px;
+  height: 140px; /* Fixed height to prevent shifts */
   user-select: none;
 }
 
@@ -196,6 +196,12 @@ export default {
   position: relative;
   background-color: var(--color-bg-secondary);
   transition: background-color 0.2s;
+  /* Prevent layout shifts */
+  overflow: hidden;
+  flex-shrink: 0;
+  /* Optimize for scrolling */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .thumbnail-container.is-loading {
@@ -210,6 +216,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .loading-icon {
@@ -224,21 +235,19 @@ export default {
   object-fit: contain;
   image-rendering: auto;
   opacity: 0;
-  animation: fadeIn 0.3s ease-in-out forwards;
+  transition: opacity 0.2s ease-out;
+  /* Prevent image from jumping during load */
+  position: relative;
+  z-index: 1;
 }
 
-.thumbnail-image.loaded {
+.thumbnail-image.loaded,
+.error-image {
   opacity: 1;
 }
 
-.thumbnail-image.error-image {
-  opacity: 1;
+.error-image {
   image-rendering: pixelated;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .thumbnail-label {
@@ -254,7 +263,8 @@ export default {
 .photo-thumbnail:hover .thumbnail-container:not(.is-loading) {
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
-  border: var(--border-width-thin) dotted var(--color-text-inverse);
+  outline: var(--border-width-thin) dotted var(--color-text-inverse);
+  outline-offset: -2px;
 }
 
 .photo-thumbnail:hover .thumbnail-label {

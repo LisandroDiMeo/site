@@ -33,28 +33,26 @@
           />
         </div>
 
-        <!-- Photos Grid with Keep-Alive approach -->
-        <div v-if="allPhotos.length > 0" class="photos-section">
-          <!-- All photos rendered but hidden when not in view -->
+        <!-- Photos Grid with Smooth Virtual Scrolling -->
+        <div v-if="allPhotos.length > 0" class="photos-virtual-container">
+          <!-- Top spacer for virtual scrolling -->
+          <div class="virtual-spacer-top" :style="{ height: spacerTop + 'px' }"></div>
+
+          <!-- Visible photos grid -->
           <div class="photos-grid">
-            <template v-for="(photo, index) in allPhotos" :key="`${currentPath}-${photo.name}`">
-              <div
-                  v-show="isPhotoVisible(index)"
-                  class="photo-wrapper"
-              >
-                <PhotoThumbnail
-                    :photo="photo"
-                    :currentPath="currentPath"
-                    :loadImmediately="hasBeenVisible(index)"
-                    @click="openPhotoModal(photo)"
-                    @imageLoaded="handleImageLoaded"
-                />
-              </div>
-            </template>
+            <PhotoThumbnail
+                v-for="(photo, index) in visiblePhotos"
+                :key="`${currentPath}-${photo.name}-${startIndex + index}`"
+                :photo="photo"
+                :currentPath="currentPath"
+                :loadImmediately="true"
+                @click="openPhotoModal(photo)"
+                @imageLoaded="handleImageLoaded"
+            />
           </div>
 
-          <!-- Virtual scroll spacer to maintain scroll height -->
-          <div class="scroll-spacer" :style="{ height: totalHeight + 'px' }"></div>
+          <!-- Bottom spacer for virtual scrolling -->
+          <div class="virtual-spacer-bottom" :style="{ height: spacerBottom + 'px' }"></div>
         </div>
 
         <!-- Cache stats in development -->
@@ -62,7 +60,8 @@
           Visible: {{ visibleRange.start }}-{{ visibleRange.end }} of {{ allPhotos.length }} |
           Cached: {{ cacheStats.loaded }}/{{ cacheStats.totalCached }} |
           Queue: {{ cacheStats.queueLength }} |
-          Active: {{ cacheStats.activeDownloads }}
+          Active: {{ cacheStats.activeDownloads }} |
+          Scroll: {{ Math.round(scrollTop) }}px
         </div>
       </div>
 
@@ -109,15 +108,17 @@ export default {
     const loadedImagesCount = ref(0)
     const showDebug = ref(process.env.NODE_ENV === 'development')
 
-    // Track which photos have been visible
-    const visiblePhotosSet = ref(new Set())
-
     // Virtual scrolling state
     const scrollTop = ref(0)
     const containerHeight = ref(600)
-    const itemHeight = 150
+    const rowHeight = 156 // Height per row (140px item + 16px gap)
     const itemsPerRow = ref(5)
-    const bufferRows = 2
+    const bufferRows = 3 // Extra rows to render above/below viewport
+
+    // Smooth scroll handling
+    let lastScrollTop = 0
+    let scrollVelocity = 0
+    let scrollAnimationFrame = null
 
     // Cache stats
     const cacheStats = ref({
@@ -170,62 +171,89 @@ export default {
     })
 
     const totalHeight = computed(() => {
-      return totalRows.value * itemHeight
+      return totalRows.value * rowHeight
     })
 
-    // Calculate visible range
+    // Calculate visible range with smooth transitions
     const visibleRange = computed(() => {
-      const startRow = Math.max(0, Math.floor(scrollTop.value / itemHeight) - bufferRows)
+      const scrollY = Math.max(0, scrollTop.value)
+      const startRow = Math.max(0, Math.floor(scrollY / rowHeight) - bufferRows)
       const endRow = Math.min(
           totalRows.value,
-          Math.ceil((scrollTop.value + containerHeight.value) / itemHeight) + bufferRows
+          Math.ceil((scrollY + containerHeight.value) / rowHeight) + bufferRows
       )
 
       const start = startRow * itemsPerRow.value
       const end = Math.min(allPhotos.value.length, endRow * itemsPerRow.value)
 
-      // Track visible photos
-      for (let i = start; i < end; i++) {
-        visiblePhotosSet.value.add(i)
-      }
-
       return { start, end, startRow, endRow }
     })
 
-    // Check if photo should be visible
-    const isPhotoVisible = (index) => {
-      return index >= visibleRange.value.start && index < visibleRange.value.end
-    }
+    // Computed for visible photos slice
+    const startIndex = computed(() => visibleRange.value.start)
+    const endIndex = computed(() => visibleRange.value.end)
 
-    // Check if photo has been visible before
-    const hasBeenVisible = (index) => {
-      return visiblePhotosSet.value.has(index)
-    }
+    const visiblePhotos = computed(() => {
+      return allPhotos.value.slice(startIndex.value, endIndex.value)
+    })
+
+    // Spacers for virtual scrolling
+    const spacerTop = computed(() => {
+      const rows = Math.floor(startIndex.value / itemsPerRow.value)
+      return rows * rowHeight
+    })
+
+    const spacerBottom = computed(() => {
+      const totalItems = allPhotos.value.length
+      const visibleEndIndex = endIndex.value
+      const remainingItems = Math.max(0, totalItems - visibleEndIndex)
+      const remainingRows = Math.ceil(remainingItems / itemsPerRow.value)
+      return remainingRows * rowHeight
+    })
 
     // Update cache stats periodically
     const updateCacheStats = () => {
       cacheStats.value = imageCache.getStats()
     }
 
-    // Throttled scroll handler
-    let scrollRaf = null
+    // Smooth scroll handler with debouncing
     const handleScroll = (event) => {
-      if (scrollRaf) cancelAnimationFrame(scrollRaf)
+      const currentScrollTop = event.target.scrollTop
 
-      scrollRaf = requestAnimationFrame(() => {
-        scrollTop.value = event.target.scrollTop
-        updateCacheStats()
+      // Cancel any pending animation frame
+      if (scrollAnimationFrame) {
+        cancelAnimationFrame(scrollAnimationFrame)
+      }
+
+      // Use requestAnimationFrame for smooth updates
+      scrollAnimationFrame = requestAnimationFrame(() => {
+        // Calculate velocity for smooth scrolling prediction
+        scrollVelocity = currentScrollTop - lastScrollTop
+        lastScrollTop = currentScrollTop
+
+        // Update scroll position
+        scrollTop.value = currentScrollTop
+
+        // Update cache stats less frequently during scroll
+        if (Math.abs(scrollVelocity) < 5) {
+          updateCacheStatsDebounced()
+        }
       })
     }
 
-    // Update dimensions
+    // Update dimensions with debouncing
+    let dimensionsTimeout = null
     const updateDimensions = () => {
-      if (!scrollContainer.value) return
+      if (dimensionsTimeout) clearTimeout(dimensionsTimeout)
 
-      containerHeight.value = scrollContainer.value.clientHeight
-      const containerWidth = scrollContainer.value.clientWidth - 40 // Account for padding
-      const itemWidth = 120 + 16
-      itemsPerRow.value = Math.floor(containerWidth / itemWidth) || 1
+      dimensionsTimeout = setTimeout(() => {
+        if (!scrollContainer.value) return
+
+        containerHeight.value = scrollContainer.value.clientHeight
+        const containerWidth = scrollContainer.value.clientWidth - 40 // Account for padding
+        const itemWidth = 120 + 16
+        itemsPerRow.value = Math.floor(containerWidth / itemWidth) || 1
+      }, 50) // Small delay to batch dimension updates
     }
 
     const loadPhotoStructure = async () => {
@@ -247,9 +275,6 @@ export default {
     }
 
     const navigateToDirectory = (directory) => {
-      // Clear visible photos set when navigating
-      visiblePhotosSet.value.clear()
-
       const newPath = currentPath.value ? `${currentPath.value}/${directory}` : directory
       currentPath.value = newPath
       loadedImagesCount.value = 0
@@ -264,8 +289,6 @@ export default {
     }
 
     const navigateToPath = (index) => {
-      visiblePhotosSet.value.clear()
-
       const segments = pathSegments.value
       currentPath.value = segments.slice(0, index + 1).join('/')
       loadedImagesCount.value = 0
@@ -280,8 +303,6 @@ export default {
 
     const goBack = () => {
       if (pathSegments.value.length > 0) {
-        visiblePhotosSet.value.clear()
-
         const segments = pathSegments.value
         segments.pop()
         currentPath.value = segments.join('/')
@@ -331,6 +352,11 @@ export default {
 
     // Update cache stats periodically
     let statsInterval = null
+    let cacheUpdateTimeout = null
+    const updateCacheStatsDebounced = () => {
+      if (cacheUpdateTimeout) clearTimeout(cacheUpdateTimeout)
+      cacheUpdateTimeout = setTimeout(updateCacheStats, 100)
+    }
 
     onMounted(async () => {
       await loadPhotoStructure()
@@ -338,6 +364,12 @@ export default {
       nextTick(() => {
         updateDimensions()
         setupResizeObserver()
+
+        // Initialize scroll position
+        if (scrollContainer.value) {
+          scrollTop.value = scrollContainer.value.scrollTop || 0
+          lastScrollTop = scrollTop.value
+        }
 
         // Update cache stats every second in debug mode
         if (showDebug.value) {
@@ -350,11 +382,17 @@ export default {
       if (resizeObserver) {
         resizeObserver.disconnect()
       }
-      if (scrollRaf) {
-        cancelAnimationFrame(scrollRaf)
+      if (scrollAnimationFrame) {
+        cancelAnimationFrame(scrollAnimationFrame)
       }
       if (statsInterval) {
         clearInterval(statsInterval)
+      }
+      if (dimensionsTimeout) {
+        clearTimeout(dimensionsTimeout)
+      }
+      if (cacheUpdateTimeout) {
+        clearTimeout(cacheUpdateTimeout)
       }
 
       // Clear cache when component unmounts
@@ -365,6 +403,7 @@ export default {
       currentPath,
       currentDirectories,
       allPhotos,
+      visiblePhotos,
       pathSegments,
       loading,
       showModal,
@@ -375,9 +414,11 @@ export default {
       visibleRange,
       showDebug,
       cacheStats,
-      visiblePhotosSet,
-      isPhotoVisible,
-      hasBeenVisible,
+      startIndex,
+      endIndex,
+      spacerTop,
+      spacerBottom,
+      scrollTop,
       navigateToDirectory,
       navigateToPath,
       goBack,
@@ -401,10 +442,14 @@ export default {
   border-bottom-color: var(--border-inset-bottom);
   margin-top: var(--space-5);
   height: calc(100vh - 120px);
-  overflow-y: auto;
+  overflow-y: scroll; /* Always show scrollbar */
   overflow-x: hidden;
   position: relative;
-  scroll-behavior: smooth;
+  /* Smooth scrolling with momentum */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto; /* Let JS handle smooth scrolling */
+  /* Stabilize scrollbar gutter */
+  scrollbar-gutter: stable;
 }
 
 .path-navigation {
@@ -453,8 +498,20 @@ export default {
   margin-bottom: var(--space-4);
 }
 
-.photos-section {
+.photos-virtual-container {
   position: relative;
+  width: 100%;
+  /* Ensure stable layout during scrolling */
+  transform: translateZ(0);
+  will-change: contents;
+}
+
+.virtual-spacer-top,
+.virtual-spacer-bottom {
+  width: 100%;
+  /* Ensure spacers don't interfere with layout */
+  font-size: 0;
+  line-height: 0;
 }
 
 .photos-grid {
@@ -462,20 +519,9 @@ export default {
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: var(--space-4);
   position: relative;
-  z-index: 1;
-}
-
-.photo-wrapper {
-  display: contents; /* Makes the wrapper not affect grid layout */
-}
-
-.scroll-spacer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  z-index: 0;
-  pointer-events: none;
+  /* Prevent layout shifts during image loading */
+  contain: layout style;
+  min-height: 156px; /* Match row height */
 }
 
 .debug-info {
