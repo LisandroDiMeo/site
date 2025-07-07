@@ -1,16 +1,16 @@
 <template>
   <WindowFrame title="photos">
     <NavigationBar @back="goBack" />
-    <div class="blank-content">
+    <div class="photo-content-wrapper" ref="scrollContainer" @scroll="handleScroll">
       <div class="path-navigation">
-        <span 
-          v-for="(segment, index) in pathSegments" 
-          :key="index"
-          class="path-segment"
+        <span
+            v-for="(segment, index) in pathSegments"
+            :key="index"
+            class="path-segment"
         >
-          <span 
-            class="path-link" 
-            @click="navigateToPath(index)"
+          <span
+              class="path-link"
+              @click="navigateToPath(index)"
           >{{ segment || 'Root' }}</span>
           <span v-if="index < pathSegments.length - 1"> / </span>
         </span>
@@ -24,62 +24,78 @@
         <!-- Directories -->
         <div v-if="currentDirectories.length > 0" class="directories-section">
           <IconItem
-            v-for="directory in currentDirectories"
-            :key="directory"
-            icon="/assets/closedfolder.png"
-            hoverIcon="/assets/openfolder.png"
-            :label="directory"
-            @click="navigateToDirectory(directory)"
+              v-for="directory in currentDirectories"
+              :key="directory"
+              icon="/assets/closedfolder.png"
+              hoverIcon="/assets/openfolder.png"
+              :label="directory"
+              @click="navigateToDirectory(directory)"
           />
         </div>
 
-        <!-- Photos with Virtual Scrolling -->
-        <div v-if="currentPhotos.length > 0" class="photos-grid" ref="photosGrid">
-          <PhotoThumbnail
-            v-for="photo in currentPhotos"
-            :key="`${currentPath}-${photo.name}`"
-            :photo="photo"
-            :currentPath="currentPath"
-            @click="openPhotoModal(photo)"
-            @imageLoaded="handleImageLoaded"
-          />
-        </div>
-      </div>
+        <!-- Photos Grid with Keep-Alive approach -->
+        <div v-if="allPhotos.length > 0" class="photos-section">
+          <!-- All photos rendered but hidden when not in view -->
+          <div class="photos-grid">
+            <template v-for="(photo, index) in allPhotos" :key="`${currentPath}-${photo.name}`">
+              <div
+                  v-show="isPhotoVisible(index)"
+                  class="photo-wrapper"
+              >
+                <PhotoThumbnail
+                    :photo="photo"
+                    :currentPath="currentPath"
+                    :loadImmediately="hasBeenVisible(index)"
+                    @click="openPhotoModal(photo)"
+                    @imageLoaded="handleImageLoaded"
+                />
+              </div>
+            </template>
+          </div>
 
-      <!-- Load More Trigger -->
-      <div v-if="hasMorePhotos && !loading" ref="loadMoreTrigger" class="load-more-trigger">
-        <img src="/assets/hourglass.gif" alt="Loading more..." class="loading-icon">
+          <!-- Virtual scroll spacer to maintain scroll height -->
+          <div class="scroll-spacer" :style="{ height: totalHeight + 'px' }"></div>
+        </div>
+
+        <!-- Cache stats in development -->
+        <div v-if="showDebug" class="debug-info">
+          Visible: {{ visibleRange.start }}-{{ visibleRange.end }} of {{ allPhotos.length }} |
+          Cached: {{ cacheStats.loaded }}/{{ cacheStats.totalCached }} |
+          Queue: {{ cacheStats.queueLength }} |
+          Active: {{ cacheStats.activeDownloads }}
+        </div>
       </div>
 
       <!-- Photo Modal -->
       <PhotoModal
-        :show="showModal"
-        :photos="currentPhotos"
-        :currentPhoto="selectedPhoto"
-        :currentPath="currentPath"
-        @close="closePhotoModal"
-        @navigate="navigatePhoto"
+          :show="showModal"
+          :photos="allPhotos"
+          :currentPhoto="selectedPhoto"
+          :currentPath="currentPath"
+          @close="closePhotoModal"
+          @navigate="navigatePhoto"
       />
     </div>
   </WindowFrame>
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import WindowFrame from '@/components/common/WindowFrame.vue'
 import NavigationBar from '@/components/common/NavigationBar.vue'
 import IconItem from "@/components/icons/IconItem.vue"
 import PhotoThumbnail from '@/components/photos/PhotoThumbnail.vue'
 import PhotoModal from '@/components/photos/PhotoModal.vue'
+import imageCache from '../data/ImageCacheManager.js'
 
 export default {
   name: 'PhotosView',
   components: {
+    PhotoThumbnail,
     IconItem,
     WindowFrame,
     NavigationBar,
-    PhotoThumbnail,
     PhotoModal
   },
   setup() {
@@ -89,13 +105,29 @@ export default {
     const currentPath = ref('')
     const showModal = ref(false)
     const selectedPhoto = ref(null)
-    const batchSize = 10
-    const currentBatch = ref(1)
-    const loadMoreTrigger = ref(null)
-    const photosGrid = ref(null)
+    const scrollContainer = ref(null)
     const loadedImagesCount = ref(0)
-    let observer = null
-    let loadingMorePhotos = ref(false)
+    const showDebug = ref(process.env.NODE_ENV === 'development')
+
+    // Track which photos have been visible
+    const visiblePhotosSet = ref(new Set())
+
+    // Virtual scrolling state
+    const scrollTop = ref(0)
+    const containerHeight = ref(600)
+    const itemHeight = 150
+    const itemsPerRow = ref(5)
+    const bufferRows = 2
+
+    // Cache stats
+    const cacheStats = ref({
+      totalCached: 0,
+      loaded: 0,
+      loading: 0,
+      errors: 0,
+      queueLength: 0,
+      activeDownloads: 0
+    })
 
     const pathSegments = computed(() => {
       return currentPath.value.split('/').filter(Boolean)
@@ -103,23 +135,22 @@ export default {
 
     const getCurrentNode = () => {
       if (!photoStructure.value) return null
-      
+
       if (!currentPath.value) {
         return photoStructure.value
       }
-      
+
       let node = photoStructure.value
       const segments = currentPath.value.split('/').filter(Boolean)
-      
+
       for (const segment of segments) {
         if (node.children && node.children[segment]) {
           node = node.children[segment]
         } else {
-          console.error('Path segment not found:', segment)
           return null
         }
       }
-      
+
       return node
     }
 
@@ -130,29 +161,71 @@ export default {
 
     const allPhotos = computed(() => {
       const node = getCurrentNode()
-      console.log(node)
       return node ? (node.file_details || []) : []
     })
 
-    const currentPhotos = computed(() => {
-      const endIndex = currentBatch.value * batchSize
-      return allPhotos.value.slice(0, endIndex)
+    // Calculate total height
+    const totalRows = computed(() => {
+      return Math.ceil(allPhotos.value.length / itemsPerRow.value)
     })
 
-    const hasMorePhotos = computed(() => {
-      return currentPhotos.value.length < allPhotos.value.length
+    const totalHeight = computed(() => {
+      return totalRows.value * itemHeight
     })
 
-    const loadMorePhotos = () => {
-      if (hasMorePhotos.value && !loadingMorePhotos.value) {
-        loadingMorePhotos.value = true
-        
-        // Use requestAnimationFrame for smooth loading
-        requestAnimationFrame(() => {
-          currentBatch.value++
-          loadingMorePhotos.value = false
-        })
+    // Calculate visible range
+    const visibleRange = computed(() => {
+      const startRow = Math.max(0, Math.floor(scrollTop.value / itemHeight) - bufferRows)
+      const endRow = Math.min(
+          totalRows.value,
+          Math.ceil((scrollTop.value + containerHeight.value) / itemHeight) + bufferRows
+      )
+
+      const start = startRow * itemsPerRow.value
+      const end = Math.min(allPhotos.value.length, endRow * itemsPerRow.value)
+
+      // Track visible photos
+      for (let i = start; i < end; i++) {
+        visiblePhotosSet.value.add(i)
       }
+
+      return { start, end, startRow, endRow }
+    })
+
+    // Check if photo should be visible
+    const isPhotoVisible = (index) => {
+      return index >= visibleRange.value.start && index < visibleRange.value.end
+    }
+
+    // Check if photo has been visible before
+    const hasBeenVisible = (index) => {
+      return visiblePhotosSet.value.has(index)
+    }
+
+    // Update cache stats periodically
+    const updateCacheStats = () => {
+      cacheStats.value = imageCache.getStats()
+    }
+
+    // Throttled scroll handler
+    let scrollRaf = null
+    const handleScroll = (event) => {
+      if (scrollRaf) cancelAnimationFrame(scrollRaf)
+
+      scrollRaf = requestAnimationFrame(() => {
+        scrollTop.value = event.target.scrollTop
+        updateCacheStats()
+      })
+    }
+
+    // Update dimensions
+    const updateDimensions = () => {
+      if (!scrollContainer.value) return
+
+      containerHeight.value = scrollContainer.value.clientHeight
+      const containerWidth = scrollContainer.value.clientWidth - 40 // Account for padding
+      const itemWidth = 120 + 16
+      itemsPerRow.value = Math.floor(containerWidth / itemWidth) || 1
     }
 
     const loadPhotoStructure = async () => {
@@ -169,56 +242,60 @@ export default {
         console.error('Failed to load photo structure:', error)
       } finally {
         loading.value = false
+        nextTick(() => updateDimensions())
       }
     }
 
     const navigateToDirectory = (directory) => {
-      // Reset states
+      // Clear visible photos set when navigating
+      visiblePhotosSet.value.clear()
+
       const newPath = currentPath.value ? `${currentPath.value}/${directory}` : directory
       currentPath.value = newPath
-      currentBatch.value = 1
       loadedImagesCount.value = 0
-      
-      console.log('Navigating to directory:', newPath)
-      
-      // Clean up observer
-      if (observer) {
-        observer.disconnect()
+
+      if (scrollContainer.value) {
+        scrollContainer.value.scrollTop = 0
+        scrollTop.value = 0
       }
-      
-      // Setup observer again after DOM update
-      nextTick(() => {
-        setupInfiniteScroll()
-      })
+
+      // Clear cache for previous directory to free memory
+      imageCache.clearAll()
     }
 
     const navigateToPath = (index) => {
+      visiblePhotosSet.value.clear()
+
       const segments = pathSegments.value
       currentPath.value = segments.slice(0, index + 1).join('/')
-      currentBatch.value = 1
       loadedImagesCount.value = 0
-      
-      // Clean up observer
-      if (observer) {
-        observer.disconnect()
+
+      if (scrollContainer.value) {
+        scrollContainer.value.scrollTop = 0
+        scrollTop.value = 0
       }
-      
-      // Setup observer again after DOM update
-      nextTick(() => {
-        setupInfiniteScroll()
-      })
+
+      imageCache.clearAll()
     }
 
     const goBack = () => {
       if (pathSegments.value.length > 0) {
+        visiblePhotosSet.value.clear()
+
         const segments = pathSegments.value
         segments.pop()
         currentPath.value = segments.join('/')
+        loadedImagesCount.value = 0
+
+        if (scrollContainer.value) {
+          scrollContainer.value.scrollTop = 0
+          scrollTop.value = 0
+        }
+
+        imageCache.clearAll()
       } else {
         router.push({ name: 'home' })
       }
-      currentBatch.value = 1
-      loadedImagesCount.value = 0
     }
 
     const openPhotoModal = (photo) => {
@@ -237,88 +314,85 @@ export default {
 
     const handleImageLoaded = (photo) => {
       loadedImagesCount.value++
-      // Optional: Add progressive loading feedback
+      updateCacheStats()
     }
 
-    // Simplified intersection observer setup
-    const setupInfiniteScroll = () => {
-      if (observer) {
-        observer.disconnect()
-      }
+    // Setup resize observer
+    let resizeObserver = null
+    const setupResizeObserver = () => {
+      if (!scrollContainer.value) return
 
-      // Wait for the trigger element to be available
-      const checkForTrigger = () => {
-        if (loadMoreTrigger.value && hasMorePhotos.value) {
-          observer = new IntersectionObserver((entries) => {
-            const target = entries[0]
-            if (target.isIntersecting && hasMorePhotos.value && !loading.value && !loadingMorePhotos.value) {
-              loadMorePhotos()
-            }
-          }, {
-            rootMargin: '200px', // Increased margin for smoother loading
-            threshold: 0.1
-          })
+      resizeObserver = new ResizeObserver(() => {
+        updateDimensions()
+      })
 
-          observer.observe(loadMoreTrigger.value)
-        }
-      }
-
-      // Check immediately and then poll if needed
-      checkForTrigger()
-      
-      // Fallback polling with shorter interval
-      const pollInterval = setInterval(() => {
-        if (loadMoreTrigger.value && hasMorePhotos.value) {
-          checkForTrigger()
-          clearInterval(pollInterval)
-        }
-      }, 100)
-
-      // Clear polling after reasonable time
-      setTimeout(() => clearInterval(pollInterval), 2000)
+      resizeObserver.observe(scrollContainer.value)
     }
+
+    // Update cache stats periodically
+    let statsInterval = null
 
     onMounted(async () => {
       await loadPhotoStructure()
+
       nextTick(() => {
-        setupInfiniteScroll()
+        updateDimensions()
+        setupResizeObserver()
+
+        // Update cache stats every second in debug mode
+        if (showDebug.value) {
+          statsInterval = setInterval(updateCacheStats, 1000)
+        }
       })
     })
 
     onUnmounted(() => {
-      if (observer) {
-        observer.disconnect()
+      if (resizeObserver) {
+        resizeObserver.disconnect()
       }
+      if (scrollRaf) {
+        cancelAnimationFrame(scrollRaf)
+      }
+      if (statsInterval) {
+        clearInterval(statsInterval)
+      }
+
+      // Clear cache when component unmounts
+      imageCache.clearAll()
     })
 
     return {
       currentPath,
       currentDirectories,
-      currentPhotos,
+      allPhotos,
       pathSegments,
       loading,
       showModal,
       selectedPhoto,
-      hasMorePhotos,
-      loadMoreTrigger,
-      photosGrid,
+      scrollContainer,
       loadedImagesCount,
+      totalHeight,
+      visibleRange,
+      showDebug,
+      cacheStats,
+      visiblePhotosSet,
+      isPhotoVisible,
+      hasBeenVisible,
       navigateToDirectory,
       navigateToPath,
       goBack,
       openPhotoModal,
       closePhotoModal,
       navigatePhoto,
-      loadMorePhotos,
-      handleImageLoaded
+      handleImageLoaded,
+      handleScroll
     }
   }
 }
 </script>
 
 <style scoped>
-.blank-content {
-  padding: var(--space-5);
+.photo-content-wrapper {
   background-color: var(--color-bg-secondary);
   border: var(--border-inset);
   border-top-color: var(--border-inset-top);
@@ -326,13 +400,21 @@ export default {
   border-right-color: var(--border-inset-right);
   border-bottom-color: var(--border-inset-bottom);
   margin-top: var(--space-5);
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scroll-behavior: smooth;
 }
 
 .path-navigation {
   background-color: var(--color-bg-primary);
   padding: var(--space-2) var(--space-4);
   border: var(--border-raised);
-  margin-bottom: var(--space-4);
+  margin: var(--space-5) var(--space-5) var(--space-4) var(--space-5);
+  position: sticky;
+  top: var(--space-5);
+  z-index: 10;
 }
 
 .path-segment {
@@ -361,10 +443,7 @@ export default {
 }
 
 .items-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-4);
+  padding: 0 var(--space-5) var(--space-5) var(--space-5);
 }
 
 .directories-section {
@@ -374,28 +453,53 @@ export default {
   margin-bottom: var(--space-4);
 }
 
+.photos-section {
+  position: relative;
+}
+
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: var(--space-4);
-  /* Optimize for performance */
-  contain: layout style paint;
+  position: relative;
+  z-index: 1;
 }
 
-.load-more-trigger {
-  width: 100%;
-  height: 40px;
-  margin-top: var(--space-4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.photo-wrapper {
+  display: contents; /* Makes the wrapper not affect grid layout */
 }
 
-/* Add media queries for responsive grid */
+.scroll-spacer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.debug-info {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-family: monospace;
+  border-radius: 4px;
+  z-index: 1000;
+  line-height: 1.4;
+}
+
 @media (max-width: 768px) {
   .photos-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: var(--space-2);
+  }
+
+  .photo-content-wrapper {
+    height: calc(100vh - 100px);
   }
 }
 </style>
