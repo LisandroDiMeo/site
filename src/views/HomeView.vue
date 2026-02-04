@@ -5,8 +5,8 @@
       <IconItem
         icon="/assets/closedfolder.png"
         hoverIcon="/assets/openfolder.png"
-        label="notes"
-        @click="navigateTo('notes')"
+        label="posts"
+        @click="navigateTo('posts')"
       />
       <IconItem
         icon="/assets/closedfolder.png"

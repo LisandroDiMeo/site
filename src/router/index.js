@@ -13,24 +13,24 @@ const routes = [
     component: () => import('@/views/AboutView.vue')
   },
   {
-    path: '/notes',
-    name: 'notes',
-    component: () => import('@/views/NotesView.vue')
+    path: '/posts',
+    name: 'posts',
+    component: () => import('@/views/PostsView.vue')
   },
   {
-    path: '/notes/write',
-    name: 'write-note',
-    component: () => import('@/views/WriteNoteView.vue')
+    path: '/posts/write',
+    name: 'write-post',
+    component: () => import('@/views/WritePostView.vue')
   },
   {
-    path: '/notes/all',
-    name: 'all-notes',
-    component: () => import('@/views/AllNotesView.vue')
+    path: '/posts/all',
+    name: 'all-posts',
+    component: () => import('@/views/AllPostsView.vue')
   },
   {
-    path: '/notes/groups',
-    name: 'notes-by-group',
-    component: () => import('@/views/NotesByGroupView.vue')
+    path: '/posts/groups',
+    name: 'posts-by-group',
+    component: () => import('@/views/PostsByGroupView.vue')
   },
   {
     path: '/photos',

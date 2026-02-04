@@ -25,7 +25,8 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import imageCache from "@/data/ImageCacheManager.js";
+import imageCache from "@/data/ImageCacheManager.js"
+import config from '@/config/env';
 
 export default {
   name: 'PhotoThumbnail',
@@ -52,12 +53,10 @@ export default {
     let cacheSubscription = null
 
     const thumbnailPath = computed(() => {
-      let basePath = '/assets/photos'
-      if (props.currentPath) {
-        basePath += `/${props.currentPath}`
-      }
-      basePath += `/${props.photo.name}`
-      return basePath
+      const photoPath = props.currentPath ? 
+        `${props.currentPath}/${props.photo.name}` : 
+        props.photo.name
+      return config.getPhotoUrl(photoPath)
     })
 
     // Handle cache updates

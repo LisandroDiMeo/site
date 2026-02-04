@@ -7,6 +7,14 @@ def generate_file_index():
     # Image extensions to include
     image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'}
 
+    # Images to omit
+    photos_to_omit_list = []
+    with open("public/dont-show.json") as file_photos_to_omit:
+        photos_to_omit = json.load(file_photos_to_omit)
+        photos_to_omit_list = photos_to_omit["filtered"]
+
+    print(f"Omiting {photos_to_omit_list}")
+
     # Path to your assets directory
     script_dir = Path(__file__).parent
     assets_path = script_dir / 'public' / 'assets' / 'photos'
@@ -46,7 +54,7 @@ def generate_file_index():
                     subdirs.append(item.name)
                 elif item.is_file():
                     # Only include image files
-                    if item.suffix.lower() in image_extensions:
+                    if item.suffix.lower() in image_extensions and item.name not in photos_to_omit_list:
                         files.append(item.name)
                         file_details.append(get_file_info(item))
         except PermissionError:

@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import config from '@/config/env'
+
 export default {
   name: 'PhotoModal',
   props: {
@@ -53,7 +55,10 @@ export default {
       return this.photos.findIndex(photo => photo.name === this.currentPhoto.name)
     },
     photoPath() {
-      return `/assets/photos/${this.currentPath}/${this.currentPhoto.name}`
+      const photoPath = this.currentPath ? 
+        `${this.currentPath}/${this.currentPhoto.name}` : 
+        this.currentPhoto.name
+      return config.getPhotoUrl(photoPath)
     }
   },
   methods: {

@@ -23,5 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
-# Photos
-/public/assets/photos
+# Environment variables (keep .env.example)
+.env
+.env.local
+
+# Large photo files (optional - comment out if you want photos in git)
+# /public/assets/photos/*.jpg
+# /public/assets/photos/*.JPG
+# /public/assets/photos/*.png
+# /public/assets/photos/*.PNG
