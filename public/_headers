@@ -1,0 +1,15 @@
+# Cloudflare Pages headers
+/*
+  Cache-Control: public, max-age=31536000
+  
+# Cache photos for longer
+/assets/photos/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Don't cache index files
+/photo-index.json
+  Cache-Control: public, max-age=300
+
+# HTML files
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate

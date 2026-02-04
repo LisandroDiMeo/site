@@ -21,6 +21,8 @@ export default defineConfig(({ mode }) => ({
       },
     } : undefined,
   },
+  // Copy Cloudflare Pages configuration files
+  publicDir: 'public',
   server: {
     port: 3000,
     proxy: {
