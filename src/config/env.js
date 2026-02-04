@@ -10,6 +10,7 @@ export const config = {
   // Photo configuration
   photosMode: import.meta.env.VITE_PHOTOS_MODE || 'filesystem',
   localPhotosPath: import.meta.env.VITE_LOCAL_PHOTOS_PATH || '/assets/photos',
+  externalPhotosUrl: import.meta.env.VITE_EXTERNAL_PHOTOS_URL,
 
   // Environment helpers
   isLocal: import.meta.env.VITE_DEPLOYMENT_TYPE === 'local',
@@ -19,6 +20,11 @@ export const config = {
 
   // Photo handling
   getPhotoUrl: (photoPath) => {
+    // If external photo URL is configured, use that
+    if (config.externalPhotosUrl) {
+      return `${config.externalPhotosUrl}/${photoPath}`
+    }
+    
     if (config.isCloud || config.photosMode === 'static') {
       // For cloud deployment, photos are served as static assets
       return `${config.localPhotosPath}/${photoPath}`
