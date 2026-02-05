@@ -4,12 +4,7 @@
     <div class="blank-content">
       <div class="icon-grid">
         <IconItem
-            icon="/assets/writenote.png"
-            label="write post"
-            @click="navigateTo('write-post')"
-        />
-        <IconItem
-            icon="/assets/notepad.png"
+            icon="/assets/person_doc.png"
             label="all posts"
             @click="navigateTo('all-posts')"
         />

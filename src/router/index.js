@@ -18,11 +18,6 @@ const routes = [
     component: () => import('@/views/PostsView.vue')
   },
   {
-    path: '/posts/write',
-    name: 'write-post',
-    component: () => import('@/views/WritePostView.vue')
-  },
-  {
     path: '/posts/all',
     name: 'all-posts',
     component: () => import('@/views/AllPostsView.vue')

@@ -20,26 +20,16 @@ export const config = {
 
   // Photo handling
   getPhotoUrl: (photoPath) => {
-    // If external photo URL is configured, use that
     if (config.externalPhotosUrl) {
       return `${config.externalPhotosUrl}/${photoPath}`
     }
-    
-    if (config.isCloud || config.photosMode === 'static') {
-      // For cloud deployment, photos are served as static assets
-      return `${config.localPhotosPath}/${photoPath}`
-    } else {
-      // For local deployment, photos might be served from API or local filesystem
-      return config.apiBaseUrl ? 
-        `${config.apiBaseUrl}${config.localPhotosPath}/${photoPath}` :
-        `${config.localPhotosPath}/${photoPath}`
-    }
+    return `${config.localPhotosPath}/${photoPath}`
   },
 
   // Posts API endpoints (placeholder for future backend)
   posts: {
-    enabled: !!config.apiBaseUrl,
-    baseUrl: config.apiBaseUrl ? `${config.apiBaseUrl}/posts` : null
+    enabled: !!import.meta.env.VITE_API_BASE_URL,
+    baseUrl: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/posts` : null
   }
 }
 
