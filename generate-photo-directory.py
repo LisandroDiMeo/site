@@ -9,11 +9,14 @@ def generate_file_index():
 
     # Images to omit
     photos_to_omit_list = []
+    photos_to_omit_dirs = []
     with open("public/dont-show.json") as file_photos_to_omit:
         photos_to_omit = json.load(file_photos_to_omit)
         photos_to_omit_list = photos_to_omit["filtered"]
+        photos_to_omit_dirs = photos_to_omit["filtered_dirs"]
 
     print(f"Omiting {photos_to_omit_list}")
+    print(f"Omiting {photos_to_omit_dirs}")
 
     # Path to your assets directory
     script_dir = Path(__file__).parent
@@ -50,7 +53,7 @@ def generate_file_index():
 
         try:
             for item in dir_path.iterdir():
-                if item.is_dir():
+                if item.is_dir() and item.name not in photos_to_omit_dirs:
                     subdirs.append(item.name)
                 elif item.is_file():
                     # Only include image files
