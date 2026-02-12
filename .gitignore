@@ -27,8 +27,5 @@ dist-ssr
 .env
 .env.local
 
-# Large photo files (optional - comment out if you want photos in git)
-# /public/assets/photos/*.jpg
-# /public/assets/photos/*.JPG
-# /public/assets/photos/*.png
-# /public/assets/photos/*.PNGpublic/assets/photos/
+# Photos served from NAS - no longer stored in git
+public/assets/photos/
