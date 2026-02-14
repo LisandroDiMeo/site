@@ -116,6 +116,25 @@ class ImageCacheManager {
     }
 
     async downloadImage(path, options = {}) {
+        const maxRetries = options.retries ?? 2
+        let lastError = null
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                const url = await this._attemptDownload(path, options)
+                return url
+            } catch (err) {
+                lastError = err
+                if (attempt < maxRetries) {
+                    await new Promise(r => setTimeout(r, 500 * (attempt + 1)))
+                }
+            }
+        }
+
+        throw lastError
+    }
+
+    async _attemptDownload(path, options = {}) {
         return new Promise((resolve, reject) => {
             const img = new Image()
 
@@ -179,6 +198,23 @@ class ImageCacheManager {
                 quality
             )
         })
+    }
+
+    // Retry all images that failed to load
+    retryErrors() {
+        const errorPaths = []
+        this.cache.forEach((imageData, key) => {
+            if (imageData.status === 'error') {
+                errorPaths.push(key)
+            }
+        })
+
+        for (const path of errorPaths) {
+            this.cache.delete(path)
+            this.loadImage(path, { quality: 0.6, retries: 2 })
+        }
+
+        return errorPaths.length
     }
 
     // Clear specific image from cache

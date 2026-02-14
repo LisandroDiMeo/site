@@ -4,6 +4,7 @@
   "file_details": [],
   "subdirs": [
     "Analog",
+    "Lightroom_JP_2025",
     "RicohSOC",
     "casa_sobre_arroyo_2025",
     "japan_2025_edits",
@@ -2088,6 +2089,598 @@
       },
       "photo_count": 0,
       "total_photos": 280
+    },
+    "Lightroom_JP_2025": {
+      "path": "Lightroom_JP_2025",
+      "files": [],
+      "file_details": [],
+      "subdirs": [
+        "Fujikawaguchi-ko",
+        "Hiroshima",
+        "Kanazawa",
+        "Kyoto",
+        "Osaka",
+        "Takayama",
+        "Tokyo"
+      ],
+      "children": {
+        "Fujikawaguchi-ko": {
+          "path": "Lightroom_JP_2025/Fujikawaguchi-ko",
+          "files": [
+            "60-DSC04412.jpg",
+            "61-DSC04452.jpg",
+            "62-DSC04556.jpg",
+            "63-DSC04588.jpg",
+            "64-DSC04609.jpg",
+            "65-DSC04688.jpg",
+            "66-DSC04725.jpg",
+            "67-DSC04738.jpg",
+            "68-DSC04739.jpg",
+            "69-DSC04813.jpg"
+          ],
+          "file_details": [
+            {
+              "name": "60-DSC04412.jpg",
+              "size": 2779100,
+              "modified": "2025-02-23T02:25:22",
+              "created": "2025-02-23T02:25:22"
+            },
+            {
+              "name": "61-DSC04452.jpg",
+              "size": 2957110,
+              "modified": "2025-02-23T02:35:00",
+              "created": "2025-02-23T02:35:00"
+            },
+            {
+              "name": "62-DSC04556.jpg",
+              "size": 10551466,
+              "modified": "2025-02-23T07:58:22",
+              "created": "2025-02-23T07:58:22"
+            },
+            {
+              "name": "63-DSC04588.jpg",
+              "size": 2609015,
+              "modified": "2025-02-23T08:16:22",
+              "created": "2025-02-23T08:16:22"
+            },
+            {
+              "name": "64-DSC04609.jpg",
+              "size": 2603963,
+              "modified": "2025-02-23T21:27:42",
+              "created": "2025-02-23T21:27:42"
+            },
+            {
+              "name": "65-DSC04688.jpg",
+              "size": 3463624,
+              "modified": "2025-02-23T22:40:33",
+              "created": "2025-02-23T22:40:33"
+            },
+            {
+              "name": "66-DSC04725.jpg",
+              "size": 3467974,
+              "modified": "2025-02-23T23:22:52",
+              "created": "2025-02-23T23:22:52"
+            },
+            {
+              "name": "67-DSC04738.jpg",
+              "size": 2561349,
+              "modified": "2025-02-24T00:26:45",
+              "created": "2025-02-24T00:26:45"
+            },
+            {
+              "name": "68-DSC04739.jpg",
+              "size": 3422141,
+              "modified": "2025-02-24T00:26:53",
+              "created": "2025-02-24T00:26:53"
+            },
+            {
+              "name": "69-DSC04813.jpg",
+              "size": 3194239,
+              "modified": "2025-02-24T01:16:04",
+              "created": "2025-02-24T01:16:04"
+            }
+          ],
+          "subdirs": [],
+          "children": {},
+          "photo_count": 10,
+          "total_photos": 10
+        },
+        "Hiroshima": {
+          "path": "Lightroom_JP_2025/Hiroshima",
+          "files": [
+            "56-DSC04292.jpg",
+            "57-DSC04330.jpg",
+            "58-DSC04334.jpg",
+            "59-DSC04351.jpg"
+          ],
+          "file_details": [
+            {
+              "name": "56-DSC04292.jpg",
+              "size": 5383725,
+              "modified": "2025-02-21T01:20:10",
+              "created": "2025-02-21T01:20:10"
+            },
+            {
+              "name": "57-DSC04330.jpg",
+              "size": 3603641,
+              "modified": "2025-02-21T22:02:37",
+              "created": "2025-02-21T22:02:37"
+            },
+            {
+              "name": "58-DSC04334.jpg",
+              "size": 3614569,
+              "modified": "2025-02-21T22:02:52",
+              "created": "2025-02-21T22:02:52"
+            },
+            {
+              "name": "59-DSC04351.jpg",
+              "size": 4743124,
+              "modified": "2025-02-22T01:34:55",
+              "created": "2025-02-22T01:34:55"
+            }
+          ],
+          "subdirs": [],
+          "children": {},
+          "photo_count": 4,
+          "total_photos": 4
+        },
+        "Kanazawa": {
+          "path": "Lightroom_JP_2025/Kanazawa",
+          "files": [
+            "37-DSC03488.jpg",
+            "38-DSC03518.jpg",
+            "39-DSC03522.jpg",
+            "40-DSC03536.jpg"
+          ],
+          "file_details": [
+            {
+              "name": "37-DSC03488.jpg",
+              "size": 4009809,
+              "modified": "2025-02-12T19:54:58",
+              "created": "2025-02-12T19:54:58"
+            },
+            {
+              "name": "38-DSC03518.jpg",
+              "size": 3029639,
+              "modified": "2025-02-12T21:42:24",
+              "created": "2025-02-12T21:42:24"
+            },
+            {
+              "name": "39-DSC03522.jpg",
+              "size": 6203130,
+              "modified": "2025-02-12T21:46:53",
+              "created": "2025-02-12T21:46:53"
+            },
+            {
+              "name": "40-DSC03536.jpg",
+              "size": 3212448,
+              "modified": "2025-02-13T02:46:43",
+              "created": "2025-02-13T02:46:43"
+            }
+          ],
+          "subdirs": [],
+          "children": {},
+          "photo_count": 4,
+          "total_photos": 4
+        },
+        "Kyoto": {
+          "path": "Lightroom_JP_2025/Kyoto",
+          "files": [
+            "41-DSC03573.jpg",
+            "42-DSC03656.jpg",
+            "43-DSC03713.jpg",
+            "44-DSC03732.jpg",
+            "45-DSC03741.jpg",
+            "46-DSC03745.jpg",
+            "47-DSC03777.jpg",
+            "48-DSC03796.jpg",
+            "49-DSC03861.jpg",
+            "50-DSC03903.jpg",
+            "51-DSC03907.jpg"
+          ],
+          "file_details": [
+            {
+              "name": "41-DSC03573.jpg",
+              "size": 2976428,
+              "modified": "2025-02-14T02:24:52",
+              "created": "2025-02-14T02:24:52"
+            },
+            {
+              "name": "42-DSC03656.jpg",
+              "size": 2520368,
+              "modified": "2025-02-14T03:44:59",
+              "created": "2025-02-14T03:44:59"
+            },
+            {
+              "name": "43-DSC03713.jpg",
+              "size": 7388349,
+              "modified": "2025-02-14T22:33:02",
+              "created": "2025-02-14T22:33:02"
+            },
+            {
+              "name": "44-DSC03732.jpg",
+              "size": 7968604,
+              "modified": "2025-02-14T22:53:39",
+              "created": "2025-02-14T22:53:39"
+            },
+            {
+              "name": "45-DSC03741.jpg",
+              "size": 8629293,
+              "modified": "2025-02-14T22:55:34",
+              "created": "2025-02-14T22:55:34"
+            },
+            {
+              "name": "46-DSC03745.jpg",
+              "size": 4772053,
+              "modified": "2025-02-14T22:56:18",
+              "created": "2025-02-14T22:56:18"
+            },
+            {
+              "name": "47-DSC03777.jpg",
+              "size": 6696751,
+              "modified": "2025-02-14T23:52:02",
+              "created": "2025-02-14T23:52:02"
+            },
+            {
+              "name": "48-DSC03796.jpg",
+              "size": 4051698,
+              "modified": "2025-02-15T00:09:21",
+              "created": "2025-02-15T00:09:21"
+            },
+            {
+              "name": "49-DSC03861.jpg",
+              "size": 2044731,
+              "modified": "2025-02-15T04:06:36",
+              "created": "2025-02-15T04:06:36"
+            },
+            {
+              "name": "50-DSC03903.jpg",
+              "size": 2881916,
+              "modified": "2025-02-15T22:31:58",
+              "created": "2025-02-15T22:31:58"
+            },
+            {
+              "name": "51-DSC03907.jpg",
+              "size": 2602008,
+              "modified": "2025-02-15T22:33:17",
+              "created": "2025-02-15T22:33:17"
+            }
+          ],
+          "subdirs": [],
+          "children": {},
+          "photo_count": 11,
+          "total_photos": 11
+        },
+        "Osaka": {
+          "path": "Lightroom_JP_2025/Osaka",
+          "files": [
+            "52-DSC03980.jpg",
+            "53-DSC04040.jpg",
+            "54-DSC04198.jpg",
+            "55-DSC04206.jpg"
+          ],
+          "file_details": [
+            {
+              "name": "52-DSC03980.jpg",
+              "size": 2873827,
+              "modified": "2025-02-17T06:16:16",
+              "created": "2025-02-17T06:16:16"
+            },
+            {
+              "name": "53-DSC04040.jpg",
+              "size": 5957101,
+              "modified": "2025-02-17T22:56:01",
+              "created": "2025-02-17T22:56:01"
+            },
+            {
+              "name": "54-DSC04198.jpg",
+              "size": 2716969,
+              "modified": "2025-02-19T06:21:45",
+              "created": "2025-02-19T06:21:45"
+            },
+            {
+              "name": "55-DSC04206.jpg",
+              "size": 4374348,
+              "modified": "2025-02-19T06:35:53",
+              "created": "2025-02-19T06:35:53"
+            }
+          ],
+          "subdirs": [],
+          "children": {},
+          "photo_count": 4,
+          "total_photos": 4
+        },
+        "Takayama": {
+          "path": "Lightroom_JP_2025/Takayama",
+          "files": [
+            "25-DSC03186.jpg",
+            "26-DSC03242.jpg",
+            "27-DSC03269.jpg",
+            "28-DSC03332.jpg",
+            "29-DSC03340.jpg",
+            "30-DSC03350.jpg",
+            "31-DSC03382.jpg",
+            "32-DSC03404.jpg",
+            "33-DSC03406.jpg",
+            "34-DSC03412.jpg",
+            "35-DSC03470.jpg",
+            "36-DSC03473.jpg"
+          ],
+          "file_details": [
+            {
+              "name": "25-DSC03186.jpg",
+              "size": 3754660,
+              "modified": "2025-02-10T03:48:19",
+              "created": "2025-02-10T03:48:19"
+            },
+            {
+              "name": "26-DSC03242.jpg",
+              "size": 2345332,
+              "modified": "2025-02-10T05:05:33",
+              "created": "2025-02-10T05:05:33"
+            },
+            {
+              "name": "27-DSC03269.jpg",
+              "size": 5787862,
+              "modified": "2025-02-10T05:35:05",
+              "created": "2025-02-10T05:35:05"
+            },
+            {
+              "name": "28-DSC03332.jpg",
+              "size": 2386312,
+              "modified": "2025-02-10T20:58:33",
+              "created": "2025-02-10T20:58:33"
+            },
+            {
+              "name": "29-DSC03340.jpg",
+              "size": 5362626,
+              "modified": "2025-02-10T21:06:31",
+              "created": "2025-02-10T21:06:31"
+            },
+            {
+              "name": "30-DSC03350.jpg",
+              "size": 1740024,
+              "modified": "2025-02-10T21:08:01",
+              "created": "2025-02-10T21:08:01"
+            },
+            {
+              "name": "31-DSC03382.jpg",
+              "size": 4093925,
+              "modified": "2025-02-10T22:57:17",
+              "created": "2025-02-10T22:57:17"
+            },
+            {
+              "name": "32-DSC03404.jpg",
+              "size": 2392373,
+              "modified": "2025-02-10T23:26:55",
+              "created": "2025-02-10T23:26:55"
+            },
+            {
+              "name": "33-DSC03406.jpg",
+              "size": 3648361,
+              "modified": "2025-02-10T23:27:00",
+              "created": "2025-02-10T23:27:00"
+            },
+            {
+              "name": "34-DSC03412.jpg",
+              "size": 5575291,
+              "modified": "2025-02-11T02:09:36",
+              "created": "2025-02-11T02:09:36"
+            },
+            {
+              "name": "35-DSC03470.jpg",
+              "size": 3438687,
+              "modified": "2025-02-11T21:41:32",
+              "created": "2025-02-11T21:41:32"
+            },
+            {
+              "name": "36-DSC03473.jpg",
+              "size": 2504177,
+              "modified": "2025-02-11T21:41:48",
+              "created": "2025-02-11T21:41:48"
+            }
+          ],
+          "subdirs": [],
+          "children": {},
+          "photo_count": 12,
+          "total_photos": 12
+        },
+        "Tokyo": {
+          "path": "Lightroom_JP_2025/Tokyo",
+          "files": [
+            "1-DSC02739.jpg",
+            "10-DSC02942.jpg",
+            "11-DSC02952.jpg",
+            "12-DSC02955.jpg",
+            "13-DSC02962.jpg",
+            "14-DSC02967.jpg",
+            "15-DSC02979.jpg",
+            "16-DSC02994.jpg",
+            "17-DSC02997.jpg",
+            "18-DSC03023.jpg",
+            "19-DSC03027.jpg",
+            "2-DSC02762.jpg",
+            "20-DSC03050.jpg",
+            "21-DSC03052.jpg",
+            "22-DSC03058.jpg",
+            "23-DSC03076.jpg",
+            "24-DSC03080.jpg",
+            "3-DSC02763.jpg",
+            "4-DSC02780.jpg",
+            "5-DSC02822.jpg",
+            "6-DSC02868.jpg",
+            "7-DSC02897.jpg",
+            "70-DSC04977.jpg",
+            "71-DSC04983.jpg",
+            "8-DSC02936.jpg",
+            "9-DSC02938.jpg"
+          ],
+          "file_details": [
+            {
+              "name": "1-DSC02739.jpg",
+              "size": 2779233,
+              "modified": "2025-02-06T18:30:21",
+              "created": "2025-02-06T18:30:21"
+            },
+            {
+              "name": "10-DSC02942.jpg",
+              "size": 3668825,
+              "modified": "2025-02-07T20:38:20",
+              "created": "2025-02-07T20:38:20"
+            },
+            {
+              "name": "11-DSC02952.jpg",
+              "size": 6740386,
+              "modified": "2025-02-07T20:44:08",
+              "created": "2025-02-07T20:44:08"
+            },
+            {
+              "name": "12-DSC02955.jpg",
+              "size": 3991340,
+              "modified": "2025-02-07T20:44:15",
+              "created": "2025-02-07T20:44:15"
+            },
+            {
+              "name": "13-DSC02962.jpg",
+              "size": 2520543,
+              "modified": "2025-02-07T21:00:08",
+              "created": "2025-02-07T21:00:08"
+            },
+            {
+              "name": "14-DSC02967.jpg",
+              "size": 4073087,
+              "modified": "2025-02-07T21:07:07",
+              "created": "2025-02-07T21:07:07"
+            },
+            {
+              "name": "15-DSC02979.jpg",
+              "size": 5765801,
+              "modified": "2025-02-07T21:16:04",
+              "created": "2025-02-07T21:16:04"
+            },
+            {
+              "name": "16-DSC02994.jpg",
+              "size": 6212383,
+              "modified": "2025-02-07T21:24:03",
+              "created": "2025-02-07T21:24:03"
+            },
+            {
+              "name": "17-DSC02997.jpg",
+              "size": 5029672,
+              "modified": "2025-02-07T21:31:43",
+              "created": "2025-02-07T21:31:43"
+            },
+            {
+              "name": "18-DSC03023.jpg",
+              "size": 2871687,
+              "modified": "2025-02-07T22:33:58",
+              "created": "2025-02-07T22:33:58"
+            },
+            {
+              "name": "19-DSC03027.jpg",
+              "size": 4549444,
+              "modified": "2025-02-07T22:52:59",
+              "created": "2025-02-07T22:52:59"
+            },
+            {
+              "name": "2-DSC02762.jpg",
+              "size": 2607846,
+              "modified": "2025-02-06T19:14:28",
+              "created": "2025-02-06T19:14:28"
+            },
+            {
+              "name": "20-DSC03050.jpg",
+              "size": 3698436,
+              "modified": "2025-02-08T04:27:42",
+              "created": "2025-02-08T04:27:42"
+            },
+            {
+              "name": "21-DSC03052.jpg",
+              "size": 3443505,
+              "modified": "2025-02-08T04:28:02",
+              "created": "2025-02-08T04:28:02"
+            },
+            {
+              "name": "22-DSC03058.jpg",
+              "size": 5523769,
+              "modified": "2025-02-08T05:27:27",
+              "created": "2025-02-08T05:27:27"
+            },
+            {
+              "name": "23-DSC03076.jpg",
+              "size": 4788895,
+              "modified": "2025-02-08T21:10:55",
+              "created": "2025-02-08T21:10:55"
+            },
+            {
+              "name": "24-DSC03080.jpg",
+              "size": 4148369,
+              "modified": "2025-02-08T21:11:05",
+              "created": "2025-02-08T21:11:05"
+            },
+            {
+              "name": "3-DSC02763.jpg",
+              "size": 2017741,
+              "modified": "2025-02-06T19:15:10",
+              "created": "2025-02-06T19:15:10"
+            },
+            {
+              "name": "4-DSC02780.jpg",
+              "size": 2713094,
+              "modified": "2025-02-06T19:56:29",
+              "created": "2025-02-06T19:56:29"
+            },
+            {
+              "name": "5-DSC02822.jpg",
+              "size": 3269804,
+              "modified": "2025-02-06T20:36:09",
+              "created": "2025-02-06T20:36:09"
+            },
+            {
+              "name": "6-DSC02868.jpg",
+              "size": 2732875,
+              "modified": "2025-02-06T22:41:49",
+              "created": "2025-02-06T22:41:49"
+            },
+            {
+              "name": "7-DSC02897.jpg",
+              "size": 3820925,
+              "modified": "2025-02-07T02:26:36",
+              "created": "2025-02-07T02:26:36"
+            },
+            {
+              "name": "70-DSC04977.jpg",
+              "size": 3834167,
+              "modified": "2025-02-25T23:22:33",
+              "created": "2025-02-25T23:22:33"
+            },
+            {
+              "name": "71-DSC04983.jpg",
+              "size": 4138891,
+              "modified": "2025-02-25T23:24:30",
+              "created": "2025-02-25T23:24:30"
+            },
+            {
+              "name": "8-DSC02936.jpg",
+              "size": 4707094,
+              "modified": "2025-02-07T03:56:11",
+              "created": "2025-02-07T03:56:11"
+            },
+            {
+              "name": "9-DSC02938.jpg",
+              "size": 8340254,
+              "modified": "2025-02-07T20:36:20",
+              "created": "2025-02-07T20:36:20"
+            }
+          ],
+          "subdirs": [],
+          "children": {},
+          "photo_count": 26,
+          "total_photos": 26
+        }
+      },
+      "photo_count": 0,
+      "total_photos": 71
     },
     "RicohSOC": {
       "path": "RicohSOC",
@@ -19119,5 +19712,5 @@
     }
   },
   "photo_count": 0,
-  "total_photos": 2564
+  "total_photos": 2635
 }

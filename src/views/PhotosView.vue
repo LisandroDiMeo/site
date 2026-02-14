@@ -14,6 +14,14 @@
           >{{ segment || 'Root' }}</span>
           <span v-if="index < pathSegments.length - 1"> / </span>
         </span>
+        <button
+            v-if="hasErrors"
+            class="reload-button"
+            @click="reloadFailedPhotos"
+            title="Reload failed photos"
+        >
+          Reload ({{ errorCount }})
+        </button>
       </div>
 
       <div v-if="loading" class="loading-container">
@@ -333,6 +341,16 @@ export default {
       selectedPhoto.value = photo
     }
 
+    const errorCount = computed(() => cacheStats.value.errors)
+    const hasErrors = computed(() => cacheStats.value.errors > 0)
+
+    const reloadFailedPhotos = () => {
+      const retried = imageCache.retryErrors()
+      if (retried > 0) {
+        updateCacheStats()
+      }
+    }
+
     const handleImageLoaded = (photo) => {
       loadedImagesCount.value++
       updateCacheStats()
@@ -371,10 +389,8 @@ export default {
           lastScrollTop = scrollTop.value
         }
 
-        // Update cache stats every second in debug mode
-        if (showDebug.value) {
-          statsInterval = setInterval(updateCacheStats, 1000)
-        }
+        // Update cache stats periodically
+        statsInterval = setInterval(updateCacheStats, 1000)
       })
     })
 
@@ -426,7 +442,10 @@ export default {
       closePhotoModal,
       navigatePhoto,
       handleImageLoaded,
-      handleScroll
+      handleScroll,
+      errorCount,
+      hasErrors,
+      reloadFailedPhotos
     }
   }
 }
@@ -473,6 +492,26 @@ export default {
 
 .path-link:hover {
   text-decoration: underline;
+}
+
+.reload-button {
+  float: right;
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  background: var(--color-bg-primary);
+  border: var(--border-raised);
+  padding: 1px var(--space-3);
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
+.reload-button:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.reload-button:active {
+  border: var(--border-inset);
 }
 
 .loading-container {
