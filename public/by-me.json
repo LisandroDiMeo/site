@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://lisandrodimeo.github.io/sanzo-wada/",
+    "title": "Sanzo Wada",
+    "description": "Interactive site allows you to explore the full collection of Wada's color combinations digitally",
+    "repositoryUrl": "https://github.com/LisandroDiMeo/sanzo-wada",
+    "icon": "themes.png",
+    "creationDate": "2026-03-01"
+  },
+  {
+    "url": "https://lisandrodimeo.github.io/epub_joiner/",
+    "title": "EPUB Joiner",
+    "description": "Simple tool to join multiple epubs. Fully free and in-browser execution.",
+    "repositoryUrl": "https://github.com/LisandroDiMeo/epub_joiner",
+    "icon": "directory_docs.png",
+    "creationDate": "2026-03-27"
+  },
+  {
+    "url": "https://lisandrodimeo.github.io/itinerary-builder/",
+    "title": "Itinerary Builder",
+    "description": "Free itinerary builder. Share itineraries with json format.",
+    "repositoryUrl": "https://github.com/LisandroDiMeo/itinerary-builder",
+    "icon": "connected_world.png",
+    "creationDate": "2026-02-15"
+  }
+]

@@ -68,7 +68,6 @@ export default {
   border-bottom-color: var(--border-raised-bottom);
   padding: 0;
   width: var(--icon-size-sm);
-  height: 14px;
   font-size: 13px;
   font-weight: var(--font-weight-bold);
   line-height: 1;

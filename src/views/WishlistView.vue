@@ -1,121 +1,54 @@
 <template>
-  <WindowFrame title="wishlist">
-    <NavigationBar @back="goBack" />
-    <div class="wishlist-content">
-      <div v-if="loading" class="loading-container">
-        <img src="/assets/hourglass.gif" alt="Loading" class="loading-icon">
-      </div>
+  <SectionLayout title="wishlist" :loading="loading" :empty="items.length === 0">
+    <template #empty>
+      <p>No items in the wishlist yet.</p>
+    </template>
 
-      <div v-else-if="items.length === 0" class="empty-state">
-        <p>No items in the wishlist yet.</p>
-      </div>
-
-      <div v-else class="wishlist-grid">
-        <div v-for="item in items" :key="item.id" class="wishlist-card">
-          <div v-if="item.image" class="card-image">
-            <img :src="item.image" :alt="item.title">
-          </div>
-          <div class="card-body">
-            <h3 class="card-title">{{ item.title }}</h3>
-            <p class="card-description">{{ item.description }}</p>
-            <div v-if="item.links && item.links.length > 0" class="card-links">
-              <a
-                v-for="(link, index) in item.links"
-                :key="index"
-                :href="link.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-button"
-              >{{ link.name }}</a>
-            </div>
+    <div class="wishlist-grid">
+      <div v-for="item in items" :key="item.id" class="wishlist-card">
+        <div v-if="item.image" class="card-image">
+          <img :src="item.image" :alt="item.title">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ item.title }}</h3>
+          <p class="card-description">{{ item.description }}</p>
+          <div v-if="item.links && item.links.length > 0" class="card-links">
+            <a
+              v-for="(link, index) in item.links"
+              :key="index"
+              :href="link.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-button"
+            >{{ link.name }}</a>
           </div>
         </div>
       </div>
     </div>
-  </WindowFrame>
+  </SectionLayout>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import WindowFrame from '@/components/common/WindowFrame.vue'
-import NavigationBar from '@/components/common/NavigationBar.vue'
+import SectionLayout from '@/components/common/SectionLayout.vue'
+import { useJsonLoader } from '@/composables/useJsonLoader'
 
 export default {
   name: 'WishlistView',
   components: {
-    WindowFrame,
-    NavigationBar
+    SectionLayout
   },
   setup() {
-    const router = useRouter()
-    const loading = ref(true)
-    const items = ref([])
-
-    const goBack = () => {
-      router.push({ name: 'home' })
-    }
-
-    const loadWishlist = async () => {
-      try {
-        loading.value = true
-        const response = await fetch('/wishlist.json')
-        if (!response.ok) {
-          throw new Error('Failed to load wishlist')
-        }
-        items.value = await response.json()
-      } catch (error) {
-        console.error('Failed to load wishlist:', error)
-      } finally {
-        loading.value = false
-      }
-    }
-
-    onMounted(() => {
-      loadWishlist()
-    })
+    const { items, loading } = useJsonLoader('/wishlist.json')
 
     return {
       loading,
-      items,
-      goBack
+      items
     }
   }
 }
 </script>
 
 <style scoped>
-.wishlist-content {
-  padding: var(--space-5);
-  background-color: var(--color-bg-secondary);
-  border: var(--border-inset);
-  border-top-color: var(--border-inset-top);
-  border-left-color: var(--border-inset-left);
-  border-right-color: var(--border-inset-right);
-  border-bottom-color: var(--border-inset-bottom);
-  margin-top: var(--space-5);
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  padding: var(--space-8);
-}
-
-.loading-icon {
-  width: var(--icon-size-lg);
-  height: var(--icon-size-lg);
-  image-rendering: pixelated;
-}
-
-.empty-state {
-  text-align: center;
-  padding: var(--space-8);
-  color: var(--color-text-secondary);
-}
-
 .wishlist-grid {
   display: flex;
   flex-direction: column;
@@ -214,10 +147,6 @@ export default {
     border-right: none;
     border-bottom: 2px solid;
     border-bottom-color: var(--border-inset-top);
-  }
-
-  .wishlist-content {
-    max-height: calc(100vh - 100px);
   }
 }
 </style>

@@ -9,8 +9,7 @@
         @click="navigateTo('posts')"
       />
       <IconItem
-        icon="/assets/closedfolder.png"
-        hoverIcon="/assets/openfolder.png"
+        icon="/assets/camera.png"
         label="photos"
         @click="navigateTo('photos')"
       />
@@ -18,6 +17,11 @@
         icon="/assets/tree.png"
         label="wishlist"
         @click="navigateTo('wishlist')"
+      />
+      <IconItem
+        icon="/assets/monitor_tweak.png"
+        label="by me"
+        @click="navigateTo('by-me')"
       />
       <IconItem
         icon="/assets/person_doc.png"

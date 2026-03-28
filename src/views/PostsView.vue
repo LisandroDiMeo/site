@@ -66,9 +66,9 @@ export default {
 }
 
 .icon-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-  gap: var(--grid-gap);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
   padding: var(--container-padding);
 }
 </style>

@@ -36,6 +36,11 @@ const routes = [
     path: '/wishlist',
     name: 'wishlist',
     component: () => import('@/views/WishlistView.vue')
+  },
+  {
+    path: '/by-me',
+    name: 'by-me',
+    component: () => import('@/views/ByMeView.vue')
   }
 ]
 
