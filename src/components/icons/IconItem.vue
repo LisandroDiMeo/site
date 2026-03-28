@@ -68,7 +68,6 @@ export default {
 
 .icon-label {
   font-size: var(--font-size-sm);
-  word-break: break-word;
-  max-width: 83px;
+  white-space: nowrap;
 }
 </style>
