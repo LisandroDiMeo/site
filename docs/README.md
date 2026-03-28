@@ -1,100 +1,30 @@
-# Vue.js Windows 97 Themed Notes Application
+# My Site
 
-A retro-styled notes application built with Vue.js 3, inspired by Windows 97 design patterns.
+This is the repository to maintain my own site. I tried to replicate a retro windows aesthetic as it was my first approach to computers, and also I think it looks cool. 
 
-## 🏗️ Architecture Overview
+The main goal to have this page is to have a digital presentation card not only for professional inquiries, but also for social ones :) 
+Here you will find more about me, specially of one of my recent favorite hobbies: photography.  
 
-This application follows the Vue 3 Composition API pattern with Pinia for state management and a clean separation of concerns:
+## Tech Stack
 
-```
-src/
-├── assets/          # Static assets and styles
-├── components/      # Reusable Vue components
-├── router/          # Vue Router configuration
-├── services/        # API and business logic services
-├── stores/          # Pinia state management
-└── views/           # Page-level components
-```
+- Vue 3 (Composition API) + Vue Router + Pinia
+- Vite
+- Axios
+- Python / Paramiko (photo indexing)
 
-## 📱 Views (Pages)
+## Installation
 
-Views represent the main pages/routes of the application:
-
-### HomeView.vue
-- **Purpose**: Main landing page displaying navigation icons
-- **Features**: Windows 97 styled icon grid with hover effects
-- **Navigation**: Routes to notes, photos, and about sections
-
-### NotesView.vue & AllNotesView.vue
-- **Purpose**: Display and manage notes collection
-- **Features**: List all notes with Windows 97 window styling
-- **State**: Connected to `useNotesStore` for data management
-
-### WriteNoteView.vue
-- **Purpose**: Create new notes with form validation
-- **Features**: Text area input, loading states, success feedback
-- **UX**: Retro-styled form with Windows 97 button and input styling
-
-### AboutView.vue & PhotosView.vue
-- **Purpose**: Static content pages
-- **Design**: Consistent Windows 97 theme with window frames
-
-## 🏪 Stores (State Management)
-
-Using Pinia for reactive state management:
-
-### notes.js
-- **State**: `notes[]`, `currentNote`, `loading`, `error`
-- **Getters**: `totalNotes()`, `notesByCategory()`, `notesByGroup()`
-- **Actions**: `fetchNotes()`, `createNote()`, `deleteNote()`
-- **Purpose**: Centralized notes data management with API integration
-
-## 🔧 Services (API Layer)
-
-Clean separation between UI and data layer:
-
-### api.js
-- **Purpose**: Axios configuration with interceptors
-- **Features**: Request/response interceptors, error handling, auth token management
-- **Configuration**: Base URL, timeout, content-type headers
-
-### notes.service.js
-- **Purpose**: Notes-specific API operations
-- **Methods**: CRUD operations, search, category filtering, group management
-- **Pattern**: Service layer abstraction over raw API calls
-
-## 🎨 Design System
-
-The application uses a comprehensive design token system (`design-tokens.css`) implementing Windows 97 aesthetics:
-
-- **Typography**: Courier and Arial fonts, pixel-perfect sizing
-- **Colors**: Classic Windows 97 palette (grays, blues, whites)
-- **Components**: Buttons, inputs, windows with authentic 3D borders
-- **Icons**: Pixelated retro icons with hover states
-
-## 🧩 Key Components
-
-### WindowFrame.vue
-- **Purpose**: Authentic Windows 97 window container
-- **Features**: Title bar, close button, 3D borders
-- **Usage**: Wraps all page content for consistent theming
-
-### Button.vue
-- **Purpose**: Windows 97 styled interactive buttons
-- **Features**: 3D border effects, active/focus states, icon support
-- **Accessibility**: Proper focus indicators and disabled states
-
-## 🚀 Getting Started
+If you like to replicate a site like this one, you will find it's very simple to follow. With the following npm commands you should be able to run it
 
 ```bash
 npm install
 npm run dev
 ```
 
-## 📁 File Organization
+## Documentation 
 
-- `components/common/` - Reusable UI components
-- `components/icons/` - Icon-specific components
-- `components/notes/` - Notes-related components
-- `assets/styles/` - CSS files and design tokens
-- `public/assets/` - Static images and icons 
+Docs were generated mainly to assist AI models for updates, feature development, and maintenance. 
+
+- [Architecture](architecture.md) — project structure, components, routes, services, stores, and configuration
+- [Deployment](deployment.md) — environment setup, build scripts, Cloudflare Pages config, and photo index generation
+- [Design System](design-system.md) — Windows 97 design tokens, color palette, typography, borders, and assets
