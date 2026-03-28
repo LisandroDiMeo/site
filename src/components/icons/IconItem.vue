@@ -69,6 +69,6 @@ export default {
 .icon-label {
   font-size: var(--font-size-sm);
   word-break: break-word;
-  max-width: 64px;
+  max-width: 83px;
 }
 </style>

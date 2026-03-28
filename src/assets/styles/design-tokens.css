@@ -47,13 +47,13 @@
     --font-family-mono: "Courier New", "Courier", monospace;
 
     /* Font Sizes (Windows 97 authentic sizes) */
-    --font-size-xs: 8px;                   /* Very small text */
-    --font-size-sm: 11px;                  /* Standard Windows 97 size */
-    --font-size-base: 12px;                /* Base size */
-    --font-size-md: 14px;                  /* Medium text */
-    --font-size-lg: 16px;                  /* Large text */
-    --font-size-xl: 18px;                  /* Extra large */
-    --font-size-2xl: 24px;                 /* Headings */
+    --font-size-xs: 10px;                   /* Very small text */
+    --font-size-sm: 14px;                  /* Standard Windows 97 size */
+    --font-size-base: 16px;                /* Base size */
+    --font-size-md: 18px;                  /* Medium text */
+    --font-size-lg: 21px;                  /* Large text */
+    --font-size-xl: 23px;                  /* Extra large */
+    --font-size-2xl: 31px;                 /* Headings */
 
     /* Line Heights */
     --line-height-tight: 1.1;
@@ -141,10 +141,10 @@
     --window-header-padding: var(--space-1) var(--space-2);
 
     /* Icons */
-    --icon-size-sm: 16px;
-    --icon-size-base: 24px;
-    --icon-size-lg: 32px;
-    --icon-size-xl: 48px;
+    --icon-size-sm: 21px;
+    --icon-size-base: 31px;
+    --icon-size-lg: 42px;
+    --icon-size-xl: 62px;
 
     /* Grid and Layout */
     --grid-gap: var(--space-6);

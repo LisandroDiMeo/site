@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "title": "Mishima - Nieve de Primavera",
+    "description": "Un libro de Mishima siempre sera bien recibido.",
+    "image": "https://acdn-us.mitiendanube.com/stores/746/904/products/9788420664446-nieve-de-primavera-e95fc7d2ac001129a517455177892549-1024-1024.webp",
+    "links": [
+      { "name": "Aguilar Libreria", "url": "https://libreriaaguilar.com.ar/productos/nieve-de-primavera-yukio-mishima/" }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Creative Selection: Inside Apple's Design Process During the Golden Age of Steve Jobs",
+    "description": "Lo lei brevemente de manera digital. Me gustaria el fisico. Ideal para entender el criterio para crear productos.",
+    "image": "https://m.media-amazon.com/images/I/71AiWmqkN2L._SY522_.jpg",
+    "links": [
+      { "name": "Amazon", "url": "https://a.co/d/0fCZ8qdZ" }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Remera de futbol retro",
+    "description": "Una camiseta de futbol canchera se recibe con gusto. Mas si es retro.",
+    "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/987a52c2c48440c5960dcd2ba72b8a67_9366/Camiseta_Suplente_Liverpool_FC_95_Blanco_KA8093_HM1.jpg",
+    "links": []
+  },
+  {
+    "id": 4,
+    "title": "Vinilos",
+    "description": "De Jazz, R&B, Bossa, Rock, Hip Hop... Lo que creas que pueda disfrutar",
+    "image": "https://i.discogs.com/mYt_jFmpjEgpgd4WlttMdOtZdreYPKyCK4izzR58Bs0/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM1NTM2/MzQyLTE3NjIwMDky/OTYtMTgyMS5qcGVn.jpeg",
+    "links": []
+  }
+]

@@ -69,7 +69,7 @@ export default {
   padding: 0;
   width: var(--icon-size-sm);
   height: 14px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: var(--font-weight-bold);
   line-height: 1;
   cursor: pointer;

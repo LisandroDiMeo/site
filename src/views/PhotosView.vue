@@ -570,7 +570,7 @@ export default {
   background: rgba(0, 0, 0, 0.9);
   color: white;
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: 14px;
   font-family: monospace;
   border-radius: 4px;
   z-index: 1000;

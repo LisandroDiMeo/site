@@ -15,6 +15,11 @@
         @click="navigateTo('photos')"
       />
       <IconItem
+        icon="/assets/tree.png"
+        label="wishlist"
+        @click="navigateTo('wishlist')"
+      />
+      <IconItem
         icon="/assets/person_doc.png"
         label="about me"
         @click="navigateTo('about')"
