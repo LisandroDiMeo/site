@@ -28,7 +28,7 @@ const routes = [
     component: () => import('@/views/PostsByGroupView.vue')
   },
   {
-    path: '/photos',
+    path: '/photos/:pathMatch(.*)*',
     name: 'photos',
     component: () => import('@/views/PhotosView.vue')
   },
@@ -41,6 +41,11 @@ const routes = [
     path: '/by-me',
     name: 'by-me',
     component: () => import('@/views/ByMeView.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('@/views/NotFoundView.vue')
   }
 ]
 

@@ -24,7 +24,14 @@
         </button>
       </div>
 
-      <div v-if="loading" class="loading-container">
+      <div v-if="pathNotFound" class="not-found-container">
+        <img src="/assets/closedfolder.png" class="not-found-icon" alt="Not found">
+        <p class="not-found-title">Directory not found</p>
+        <p class="not-found-path">{{ currentPath }}</p>
+        <button class="not-found-btn" @click="$router.push('/photos')">← Go to Photos</button>
+      </div>
+
+      <div v-else-if="loading" class="loading-container">
         <img src="/assets/hourglass.gif" alt="Loading" class="loading-icon">
       </div>
 
@@ -88,7 +95,7 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import WindowFrame from '@/components/common/WindowFrame.vue'
 import NavigationBar from '@/components/common/NavigationBar.vue'
 import IconItem from "@/components/icons/IconItem.vue"
@@ -107,9 +114,12 @@ export default {
   },
   setup() {
     const router = useRouter()
+    const route = useRoute()
+    const pathFromRoute = (p) => Array.isArray(p) ? p.join('/') : (p || '')
     const loading = ref(true)
     const photoStructure = ref(null)
-    const currentPath = ref('')
+    const currentPath = ref(pathFromRoute(route.params.pathMatch))
+    const pathNotFound = ref(false)
     const showModal = ref(false)
     const selectedPhoto = ref(null)
     const scrollContainer = ref(null)
@@ -274,6 +284,9 @@ export default {
         }
 
         photoStructure.value = await response.json()
+        if (currentPath.value && getCurrentNode() === null) {
+          pathNotFound.value = true
+        }
       } catch (error) {
         console.error('Failed to load photo structure:', error)
       } finally {
@@ -284,48 +297,40 @@ export default {
 
     const navigateToDirectory = (directory) => {
       const newPath = currentPath.value ? `${currentPath.value}/${directory}` : directory
-      currentPath.value = newPath
-      loadedImagesCount.value = 0
-
-      if (scrollContainer.value) {
-        scrollContainer.value.scrollTop = 0
-        scrollTop.value = 0
-      }
-
-      // Clear cache for previous directory to free memory
-      imageCache.clearAll()
+      router.push(`/photos/${newPath}`)
     }
 
     const navigateToPath = (index) => {
       const segments = pathSegments.value
-      currentPath.value = segments.slice(0, index + 1).join('/')
-      loadedImagesCount.value = 0
-
-      if (scrollContainer.value) {
-        scrollContainer.value.scrollTop = 0
-        scrollTop.value = 0
-      }
-
-      imageCache.clearAll()
+      const newPath = segments.slice(0, index + 1).join('/')
+      router.push(newPath ? `/photos/${newPath}` : '/photos')
     }
 
     const goBack = () => {
       if (pathSegments.value.length > 0) {
-        const segments = pathSegments.value
+        const segments = [...pathSegments.value]
         segments.pop()
-        currentPath.value = segments.join('/')
-        loadedImagesCount.value = 0
-
-        if (scrollContainer.value) {
-          scrollContainer.value.scrollTop = 0
-          scrollTop.value = 0
-        }
-
-        imageCache.clearAll()
+        router.push(segments.length ? `/photos/${segments.join('/')}` : '/photos')
       } else {
         router.push({ name: 'home' })
       }
     }
+
+    watch(() => route.params.pathMatch, (newMatch) => {
+      const newPath = pathFromRoute(newMatch)
+      if (newPath === currentPath.value) return
+      currentPath.value = newPath
+      pathNotFound.value = false
+      loadedImagesCount.value = 0
+      if (scrollContainer.value) {
+        scrollContainer.value.scrollTop = 0
+        scrollTop.value = 0
+      }
+      imageCache.clearAll()
+      if (photoStructure.value && newPath && getCurrentNode() === null) {
+        pathNotFound.value = true
+      }
+    })
 
     const openPhotoModal = (photo) => {
       selectedPhoto.value = photo
@@ -417,6 +422,7 @@ export default {
 
     return {
       currentPath,
+      pathNotFound,
       currentDirectories,
       allPhotos,
       visiblePhotos,
@@ -561,6 +567,45 @@ export default {
   /* Prevent layout shifts during image loading */
   contain: layout style;
   min-height: 156px; /* Match row height */
+}
+
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-8);
+  gap: var(--space-4);
+}
+
+.not-found-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.not-found-title {
+  font-size: var(--font-size-base);
+  font-weight: bold;
+  color: var(--color-error);
+}
+
+.not-found-path {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-family: monospace;
+}
+
+.not-found-btn {
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  background: var(--color-bg-primary);
+  border: var(--border-raised);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+}
+
+.not-found-btn:active {
+  border: var(--border-inset);
 }
 
 .debug-info {
