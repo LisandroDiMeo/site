@@ -51,6 +51,7 @@ export default {
     const isInView = ref(false)
     let observer = null
     let cacheSubscription = null
+    const loadOptions = { quality: 0.6 }  // Reduce quality to 60% for thumbnails
 
     const thumbnailPath = computed(() => {
       const photoPath = props.currentPath ? 
@@ -87,12 +88,10 @@ export default {
       try {
         // Subscribe to cache updates
         cacheSubscription = (data) => handleCacheUpdate(data)
-        imageCache.subscribe(thumbnailPath.value, cacheSubscription)
+        imageCache.subscribe(thumbnailPath.value, cacheSubscription, loadOptions)
 
         // Try to load with quality reduction for faster loading
-        await imageCache.loadImage(thumbnailPath.value, {
-          quality: 0.6  // Reduce quality to 60% for thumbnails
-        })
+        await imageCache.loadImage(thumbnailPath.value, loadOptions)
       } catch (err) {
         // Error handling is done through subscription
       }
@@ -159,8 +158,13 @@ export default {
       }
 
       if (cacheSubscription) {
-        imageCache.unsubscribe(thumbnailPath.value, cacheSubscription)
+        imageCache.unsubscribe(thumbnailPath.value, cacheSubscription, loadOptions)
       }
+
+      // Cancel the underlying load so off-screen/unmounted thumbnails don't
+      // hold a concurrency slot or continue occupying the queue during fast
+      // scrolling.
+      imageCache.cancel(thumbnailPath.value, loadOptions)
     })
 
     return {
