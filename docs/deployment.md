@@ -47,10 +47,11 @@ In cloud mode, the posts API is disabled (no `VITE_API_BASE_URL`), and photos ar
 
 ## Cloudflare Pages
 
-Static files in `public/` include Cloudflare-specific configuration:
+Deployed as a Worker with static assets (Workers Builds). Build command: `npm run build:production`; deploy command: `npx wrangler versions upload`.
 
-- `_headers` — HTTP header rules
-- `_redirects` — URL redirect rules
+- `wrangler.jsonc` — tells wrangler to upload `./dist`. The `name` must match the Worker name in the Cloudflare dashboard. Without this file the deploy step fails with "Missing entry-point to Worker script or to assets directory".
+- `not_found_handling: single-page-application` serves `index.html` for unknown routes (replaces the old `_redirects` rule, which Workers assets reject as an infinite loop).
+- `public/_headers` — HTTP header rules
 
 ## NPM Scripts
 

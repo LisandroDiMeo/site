@@ -1,0 +1,44 @@
+/* Theme F0 ("paper") — bright console, black ink, navy accent.
+   See lisandrodimeo-redesign/HANDOFF.md for the source spec. */
+:root {
+  --f0-page: #dcd8d0;
+  --f0-window: #fbfaf6;
+  --f0-text: #2a2a2a;
+  --f0-muted: #86827a;
+  --f0-strong: #111111;
+  --f0-accent: #0a246a;
+  --f0-rule: #b8b4ac;
+  --f0-title-a: #0a246a;
+  --f0-title-b: #a6caf0;
+  --f0-code-bg: #f1eee7;
+  --f0-code-border: #d6d2c9;
+
+  /* swap to "'Ubuntu', sans-serif" to try the sans alternative from the handoff */
+  --font-body: 'Ubuntu Mono', monospace;
+
+  --fs-body: 17px;
+  --fs-article-body: 18px;
+  --fs-meta: 15px;
+  --fs-home-name: 64px;
+  --fs-h1: 44px;
+  --fs-article-h1: 48px;
+  --lh-body: 1.65;
+  --lh-article: 1.7;
+
+  --shell-page-padding-y: 56px;
+  --shell-page-padding-x: 120px;
+  --shell-content-padding-y: 36px;
+  --shell-content-padding-x: 48px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --shell-page-padding-y: 16px;
+    --shell-page-padding-x: 16px;
+    --shell-content-padding-y: 20px;
+    --shell-content-padding-x: 20px;
+    --fs-home-name: 40px;
+    --fs-h1: 32px;
+    --fs-article-h1: 34px;
+  }
+}

@@ -26,6 +26,10 @@ dist-ssr
 # Environment variables (keep .env.example)
 .env
 .env.local
+.env.production
 
 # Photos served from NAS - no longer stored in git
 public/assets/photos/
+
+# Claude Code local config
+.claude/

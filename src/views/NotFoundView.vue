@@ -1,78 +1,51 @@
 <template>
-  <WindowFrame title="Error">
-    <div class="error-content">
-      <div class="error-header">
-        <img src="/assets/monitor_tweak.png" alt="Error" class="error-icon">
-        <span class="error-code">404</span>
+  <AppShell title-bar-text="Command Prompt — lisandro">
+    <div class="header">
+      <div class="prompt-line">
+        C:\lisandro&gt; {{ $route.path }}
       </div>
-      <p class="error-message">Page not found.</p>
-      <p class="error-detail">The address <code>{{ $route.path }}</code> does not exist.</p>
-      <button class="error-btn" @click="$router.push('/')">← Go Home</button>
+      <AppNav />
     </div>
-  </WindowFrame>
+
+    <div class="error">
+      <div class="error-code">
+        404
+      </div>
+      <p>'{{ $route.path }}' is not recognized as an internal or external command.</p>
+      <RouterLink to="/">
+        &larr; cd \
+      </RouterLink>
+    </div>
+  </AppShell>
 </template>
 
-<script>
-import WindowFrame from '@/components/common/WindowFrame.vue'
-export default {
-  name: 'NotFoundView',
-  components: { WindowFrame }
-}
+<script setup>
+import AppShell from '@/components/shell/AppShell.vue'
+import AppNav from '@/components/shell/AppNav.vue'
 </script>
 
 <style scoped>
-.error-content {
-  padding: var(--space-6);
+.header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 14px;
+}
+
+.prompt-line {
+  color: var(--f0-muted);
+  font-size: var(--fs-meta);
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   align-items: flex-start;
 }
 
-.error-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.error-icon {
-  width: 32px;
-  height: 32px;
-  image-rendering: pixelated;
-}
-
 .error-code {
-  font-size: var(--font-size-2xl);
-  font-weight: bold;
-  color: var(--color-error);
-}
-
-.error-message {
-  font-size: var(--font-size-base);
-  font-weight: bold;
-}
-
-.error-detail {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.error-detail code {
-  background: var(--color-bg-secondary);
-  padding: 0 var(--space-2);
-  border: var(--border-inset);
-}
-
-.error-btn {
-  font-family: inherit;
-  font-size: var(--font-size-sm);
-  background: var(--color-bg-primary);
-  border: var(--border-raised);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-}
-
-.error-btn:active {
-  border: var(--border-inset);
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  color: var(--f0-strong);
 }
 </style>

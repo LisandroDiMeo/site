@@ -5,42 +5,38 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    meta: { section: 'home' }
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('@/views/AboutView.vue')
+    path: '/writing',
+    name: 'writing',
+    component: () => import('@/views/WritingView.vue'),
+    meta: { section: 'writing' }
   },
   {
-    path: '/posts',
-    name: 'posts',
-    component: () => import('@/views/PostsView.vue')
-  },
-  {
-    path: '/posts/all',
-    name: 'all-posts',
-    component: () => import('@/views/AllPostsView.vue')
-  },
-  {
-    path: '/posts/groups',
-    name: 'posts-by-group',
-    component: () => import('@/views/PostsByGroupView.vue')
+    path: '/writing/:id',
+    name: 'article',
+    component: () => import('@/views/ArticleView.vue'),
+    meta: { section: 'writing' }
   },
   {
     path: '/photos/:pathMatch(.*)*',
     name: 'photos',
-    component: () => import('@/views/PhotosView.vue')
+    component: () => import('@/views/PhotosView.vue'),
+    meta: { section: 'photos' }
   },
   {
-    path: '/wishlist',
-    name: 'wishlist',
-    component: () => import('@/views/WishlistView.vue')
+    path: '/projects',
+    name: 'projects',
+    component: () => import('@/views/ProjectsView.vue'),
+    meta: { section: 'projects' }
   },
   {
-    path: '/by-me',
-    name: 'by-me',
-    component: () => import('@/views/ByMeView.vue')
+    path: '/hello',
+    name: 'hello',
+    component: () => import('@/views/HelloView.vue'),
+    meta: { section: 'hello' }
   },
   {
     path: '/:pathMatch(.*)*',
