@@ -1,64 +1,43 @@
 # Design System
 
-The application implements a Windows 97 aesthetic through a comprehensive design token system and themed CSS.
+The application implements a minimal "Command Prompt" aesthetic (Windows 2000 style), theme **F0 ("paper")** only, driven by CSS custom properties. Source spec: `lisandrodimeo-redesign/HANDOFF.md` and its mockups (design references, not shipped code).
 
 ## Style Files
 
-- **`design-tokens.css`** — all CSS custom properties defining the visual language
-- **`main.css`** — global resets, base styles, utility classes
-- **`windows97.css`** — scrollbar styling, button/input effects, font smoothing
+- **`theme-f0.css`** — all CSS custom properties defining the visual language (colors, font variable, type scale, shell padding)
+- **`main.css`** — global reset, base styles, link/focus styles, the shared `blink` keyframe used by Home's cursor
 
-## Color Palette
+## Color Tokens (theme F0)
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| Primary | `#000080` | Windows blue, links, window headers |
-| Background | `#008080` | Teal desktop background |
-| Surface | `#c0c0c0` | Window/button backgrounds |
-| Grays | `#ffffff` / `#808080` / `#404040` / `#000000` | Borders, text, shadows |
-| Success | `#008000` | Confirmation states |
-| Warning | `#808000` | Caution states |
-| Error | `#800000` | Error states |
-| Info | `#000080` | Informational states |
+| `--f0-page` | `#dcd8d0` | Background around the window |
+| `--f0-window` | `#fbfaf6` | Window/console background |
+| `--f0-text` | `#2a2a2a` | Body text |
+| `--f0-muted` | `#86827a` | Dates, prompts, meta lines |
+| `--f0-strong` | `#111111` | Headings, strong link text |
+| `--f0-accent` | `#0a246a` | Section labels (`> now`), active nav, tags |
+| `--f0-rule` | `#b8b4ac` | Dotted link underlines, dashed dividers |
+| `--f0-title-a` / `--f0-title-b` | `#0a246a` / `#a6caf0` | Title bar gradient |
+| `--f0-code-bg` / `--f0-code-border` | `#f1eee7` / `#d6d2c9` | Code blocks |
 
 ## Typography
 
-- **Fonts**: "MS Sans Serif", Courier, Arial
-- **Base size**: 14px (Windows 97 standard)
-- **Scale**: 10px (xs) to 31px (2xl)
-- Font smoothing disabled for pixel-perfect rendering
+- **Font**: `--font-body`, defaults to `'Ubuntu Mono', monospace` (Google Fonts, weights 400/700 + italic 400, loaded via `<link>` in `index.html`). Swap the variable to `'Ubuntu', sans-serif` to try the sans alternative explored in the handoff — it's the only thing that needs to change.
+- **Sizes** (all as CSS vars): body 17px (`--fs-body`), article body 18px (`--fs-article-body`), meta 15px (`--fs-meta`), home name 64px (`--fs-home-name`), page H1 44px (`--fs-h1`), article H1 48px (`--fs-article-h1`). Line-height 1.65 body / 1.7 article.
+- Responsive: under 768px, `theme-f0.css` shrinks the home-name/H1 sizes and the shell padding variables (see below); two-column grids collapse to one column via view-level media queries.
 
-## 3D Border System
+## The window shell
 
-The signature Windows 97 look comes from asymmetric borders:
+Shared by every page via `AppShell.vue`:
 
-- **Raised** (buttons, window frames): white top/left, black bottom/right
-- **Inset** (inputs, text areas): black top/left, white bottom/right
-- **Active press**: border colors invert
-- Border widths: 1-3px
-
-## Spacing
-
-Scale: 0, 2px, 4px, 8px, 12px, 16px, 20px, 24px, 32px
-
-## Component Tokens
-
-| Component | Key Properties |
-|-----------|---------------|
-| Button | padding 4px 12px, 14px font, gray background, raised borders |
-| Input | white background, inset borders, 14px font |
-| Window | gray background, blue gradient header, 20px padding |
-| Icons | sizes: 21px, 31px, 42px, 62px |
+- Outer page padding: `--shell-page-padding-y`/`-x` (56px/120px desktop, 16px/16px mobile).
+- Window: `2px solid #c0c0c0` border + `1px solid #404040` outline + soft drop shadow, background `--f0-window`.
+- 30px title bar: gradient background (`--f0-title-a` → `--f0-title-b`), white bold text, decorative `_ □ ×` buttons (non-functional, `aria-hidden`).
+- Content padding: `--shell-content-padding-y`/`-x` (36px/48px desktop, 20px/20px mobile).
+- Links: no underline, 1px dotted bottom border in `--f0-rule`, solid on hover (see `main.css`).
+- Each page supplies its own muted prompt line (`C:\lisandro> cd ...`) and `<AppNav>` above its content — `AppShell` only owns the window chrome, not the header layout, since Home's header (version banner + big name) differs structurally from every other page's prompt+nav pattern.
 
 ## Assets
 
-Pixel-art icons in `public/assets/`, all rendered with `image-rendering: pixelated`:
-
-- `closedfolder.png` / `openfolder.png` — folder icons with hover swap
-- `hourglass.gif` — loading animation
-- `postit.png` — post icon
-- `tree.png` — wishlist icon
-- `person_doc.png` — fallback photo icon
-- `smiley.png` — favicon
-- `success.png` — checkmark icon
-- `me.jpg` — profile photo
+Only `public/assets/smiley.png` remains, used as the favicon (`index.html`). The Windows 97-era pixel-art icons (folder icons, hourglass, post-it, tree, etc.) were removed along with the desktop/explorer metaphor they supported — there are no per-file icons or folder icons in the new design.
