@@ -1,7 +1,14 @@
 <template>
   <div class="loading-container">
-    <img src="/assets/hourglass.gif" alt="Loading" class="loading-icon">
-    <span v-if="message" class="loading-message">{{ message }}</span>
+    <img
+      src="/assets/hourglass.gif"
+      alt="Loading"
+      class="loading-icon"
+    >
+    <span
+      v-if="message"
+      class="loading-message"
+    >{{ message }}</span>
   </div>
 </template>
 

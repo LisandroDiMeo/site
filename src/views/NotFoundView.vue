@@ -2,12 +2,25 @@
   <WindowFrame title="Error">
     <div class="error-content">
       <div class="error-header">
-        <img src="/assets/monitor_tweak.png" alt="Error" class="error-icon">
+        <img
+          src="/assets/monitor_tweak.png"
+          alt="Error"
+          class="error-icon"
+        >
         <span class="error-code">404</span>
       </div>
-      <p class="error-message">Page not found.</p>
-      <p class="error-detail">The address <code>{{ $route.path }}</code> does not exist.</p>
-      <button class="error-btn" @click="$router.push('/')">← Go Home</button>
+      <p class="error-message">
+        Page not found.
+      </p>
+      <p class="error-detail">
+        The address <code>{{ $route.path }}</code> does not exist.
+      </p>
+      <button
+        class="error-btn"
+        @click="$router.push('/')"
+      >
+        ← Go Home
+      </button>
     </div>
   </WindowFrame>
 </template>

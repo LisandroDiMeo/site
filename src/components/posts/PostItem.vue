@@ -1,21 +1,46 @@
 <template>
   <div class="post-item">
-    <img src="/assets/postit.png" alt="Post" class="post-icon">
+    <img
+      src="/assets/postit.png"
+      alt="Post"
+      class="post-icon"
+    >
     <div class="post-content">
-      <div class="post-text">{{ post.content }}</div>
-      <div class="post-categories" v-if="post.categories && post.categories.length > 0">
+      <div class="post-text">
+        {{ post.content }}
+      </div>
+      <div
+        v-if="post.categories && post.categories.length > 0"
+        class="post-categories"
+      >
         categories: {{ post.categories.join(', ') }}
       </div>
-      <div class="post-groups" v-if="post.groups && post.groups.length > 0">
+      <div
+        v-if="post.groups && post.groups.length > 0"
+        class="post-groups"
+      >
         groups: {{ post.groups.map(g => g.name || g).join(', ') }}
       </div>
       <div class="post-date">
         {{ formatDate(post.createdAt) }}
       </div>
     </div>
-    <div class="post-actions" v-if="showActions">
-      <button class="action-btn" @click="$emit('edit', post.id)">Edit</button>
-      <button class="action-btn" @click="$emit('delete', post._id)">Delete</button>
+    <div
+      v-if="showActions"
+      class="post-actions"
+    >
+      <button
+        class="action-btn"
+        @click="$emit('edit', post.id)"
+      >
+        Edit
+      </button>
+      <button
+        class="action-btn"
+        @click="$emit('delete', post._id)"
+      >
+        Delete
+      </button>
     </div>
   </div>
 </template>
@@ -33,6 +58,7 @@ export default {
       default: false
     }
   },
+  emits: ['edit', 'delete'],
   methods: {
     formatDate(dateString) {
       if (!dateString) return ''

@@ -1,10 +1,16 @@
 <template>
   <div class="posts-list">
-    <div v-if="loading" class="loading-container">
+    <div
+      v-if="loading"
+      class="loading-container"
+    >
       <LoadingSpinner message="Loading posts..." />
     </div>
     
-    <div v-else-if="posts.length === 0" class="empty-state">
+    <div
+      v-else-if="posts.length === 0"
+      class="empty-state"
+    >
       <p>No posts found.</p>
     </div>
     
@@ -18,9 +24,14 @@
         @delete="$emit('delete', $event)"
       />
       
-      <div v-if="showPagination" class="pagination-info">
+      <div
+        v-if="showPagination"
+        class="pagination-info"
+      >
         <span>1...{{ displayCount }} ></span>
-        <div style="margin-top: 8px;">paginated</div>
+        <div style="margin-top: 8px;">
+          paginated
+        </div>
       </div>
     </div>
   </div>
@@ -54,6 +65,7 @@ export default {
       default: true
     }
   },
+  emits: ['edit', 'delete'],
   computed: {
     displayCount() {
       return this.posts.length > 5 ? 5 : this.posts.length

@@ -1,23 +1,40 @@
 <template>
-  <div class="photo-thumbnail" @click="handleClick" :data-name="photo.name">
-    <div class="thumbnail-container" :class="{'is-loading': loading, 'has-error': error}">
+  <div
+    class="photo-thumbnail"
+    :data-name="photo.name"
+    @click="handleClick"
+  >
+    <div
+      class="thumbnail-container"
+      :class="{'is-loading': loading, 'has-error': error}"
+    >
       <!-- Placeholder while loading -->
-      <div v-if="loading" class="loading-placeholder">
-        <img src="/assets/hourglass.gif" alt="Loading..." class="loading-icon"/>
+      <div
+        v-if="loading"
+        class="loading-placeholder"
+      >
+        <img
+          src="/assets/hourglass.gif"
+          alt="Loading..."
+          class="loading-icon"
+        >
       </div>
 
       <!-- Loaded image -->
-      <img v-else-if="imageUrl && !error"
-           :src="imageUrl"
-           :alt="photo.name"
-           class="thumbnail-image loaded"
+      <img
+        v-else-if="imageUrl && !error"
+        :src="imageUrl"
+        :alt="photo.name"
+        class="thumbnail-image loaded"
       >
 
       <!-- Error state -->
-      <img v-else-if="error"
-           src="/assets/person_doc.png"
-           :alt="photo.name"
-           class="thumbnail-image error-image">
+      <img
+        v-else-if="error"
+        src="/assets/person_doc.png"
+        :alt="photo.name"
+        class="thumbnail-image error-image"
+      >
     </div>
     <span class="thumbnail-label">{{ photo.name }}</span>
   </div>
@@ -44,6 +61,7 @@ export default {
       default: false
     }
   },
+  emits: ['imageLoaded', 'click'],
   setup(props, { emit }) {
     const loading = ref(true)
     const error = ref(false)

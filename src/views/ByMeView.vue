@@ -1,16 +1,20 @@
 <template>
-  <SectionLayout title="by me" :loading="loading" :empty="items.length === 0">
+  <SectionLayout
+    title="by me"
+    :loading="loading"
+    :empty="items.length === 0"
+  >
     <template #empty>
       <p>No projects shared yet.</p>
     </template>
 
     <div class="explorer-view">
       <div class="explorer-header">
-        <span class="col-icon"></span>
+        <span class="col-icon" />
         <span class="col-name header-cell">Name</span>
         <span class="col-description header-cell">Description</span>
         <span class="col-date header-cell">Date</span>
-        <span class="col-links"></span>
+        <span class="col-links" />
       </div>
       <div class="explorer-rows">
         <div
@@ -26,9 +30,15 @@
               class="item-icon"
             >
           </div>
-          <div class="col-name">{{ item.title }}</div>
-          <div class="col-description">{{ item.description }}</div>
-          <div class="col-date">{{ formatDate(item.creationDate) }}</div>
+          <div class="col-name">
+            {{ item.title }}
+          </div>
+          <div class="col-description">
+            {{ item.description }}
+          </div>
+          <div class="col-date">
+            {{ formatDate(item.creationDate) }}
+          </div>
           <div class="col-links">
             <a
               v-if="item.repositoryUrl"
@@ -39,7 +49,11 @@
               title="View repository"
               @click.stop
             >
-              <img src="/assets/directory_docs.png" alt="Repository" class="repo-icon">
+              <img
+                src="/assets/directory_docs.png"
+                alt="Repository"
+                class="repo-icon"
+              >
             </a>
           </div>
         </div>

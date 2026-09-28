@@ -1,77 +1,122 @@
 <template>
   <WindowFrame title="photos">
     <NavigationBar @back="goBack" />
-    <div class="photo-content-wrapper" ref="scrollContainer" @scroll="handleScroll">
+    <div
+      ref="scrollContainer"
+      class="photo-content-wrapper"
+      @scroll="handleScroll"
+    >
       <div class="path-navigation">
         <span
-            v-for="(segment, index) in pathSegments"
-            :key="index"
-            class="path-segment"
+          v-for="(segment, index) in pathSegments"
+          :key="index"
+          class="path-segment"
         >
           <span
-              class="path-link"
-              @click="navigateToPath(index)"
+            class="path-link"
+            @click="navigateToPath(index)"
           >{{ segment || 'Root' }}</span>
           <span v-if="index < pathSegments.length - 1"> / </span>
         </span>
         <button
-            v-if="hasErrors"
-            class="reload-button"
-            @click="reloadFailedPhotos"
-            title="Reload failed photos"
+          v-if="hasErrors"
+          class="reload-button"
+          title="Reload failed photos"
+          @click="reloadFailedPhotos"
         >
           Reload ({{ errorCount }})
         </button>
       </div>
 
-      <div v-if="pathNotFound" class="not-found-container">
-        <img src="/assets/closedfolder.png" class="not-found-icon" alt="Not found">
-        <p class="not-found-title">Directory not found</p>
-        <p class="not-found-path">{{ currentPath }}</p>
-        <button class="not-found-btn" @click="$router.push('/photos')">← Go to Photos</button>
+      <div
+        v-if="pathNotFound"
+        class="not-found-container"
+      >
+        <img
+          src="/assets/closedfolder.png"
+          class="not-found-icon"
+          alt="Not found"
+        >
+        <p class="not-found-title">
+          Directory not found
+        </p>
+        <p class="not-found-path">
+          {{ currentPath }}
+        </p>
+        <button
+          class="not-found-btn"
+          @click="$router.push('/photos')"
+        >
+          ← Go to Photos
+        </button>
       </div>
 
-      <div v-else-if="loading" class="loading-container">
-        <img src="/assets/hourglass.gif" alt="Loading" class="loading-icon">
+      <div
+        v-else-if="loading"
+        class="loading-container"
+      >
+        <img
+          src="/assets/hourglass.gif"
+          alt="Loading"
+          class="loading-icon"
+        >
       </div>
 
-      <div v-else class="items-container">
+      <div
+        v-else
+        class="items-container"
+      >
         <!-- Directories -->
-        <div v-if="currentDirectories.length > 0" class="directories-section">
+        <div
+          v-if="currentDirectories.length > 0"
+          class="directories-section"
+        >
           <IconItem
-              v-for="directory in currentDirectories"
-              :key="directory"
-              icon="/assets/closedfolder.png"
-              hoverIcon="/assets/openfolder.png"
-              :label="directory"
-              @click="navigateToDirectory(directory)"
+            v-for="directory in currentDirectories"
+            :key="directory"
+            icon="/assets/closedfolder.png"
+            hover-icon="/assets/openfolder.png"
+            :label="directory"
+            @click="navigateToDirectory(directory)"
           />
         </div>
 
         <!-- Photos Grid with Smooth Virtual Scrolling -->
-        <div v-if="allPhotos.length > 0" class="photos-virtual-container">
+        <div
+          v-if="allPhotos.length > 0"
+          class="photos-virtual-container"
+        >
           <!-- Top spacer for virtual scrolling -->
-          <div class="virtual-spacer-top" :style="{ height: spacerTop + 'px' }"></div>
+          <div
+            class="virtual-spacer-top"
+            :style="{ height: spacerTop + 'px' }"
+          />
 
           <!-- Visible photos grid -->
           <div class="photos-grid">
             <PhotoThumbnail
-                v-for="(photo, index) in visiblePhotos"
-                :key="`${currentPath}-${photo.name}-${startIndex + index}`"
-                :photo="photo"
-                :currentPath="currentPath"
-                :loadImmediately="true"
-                @click="openPhotoModal(photo)"
-                @imageLoaded="handleImageLoaded"
+              v-for="(photo, index) in visiblePhotos"
+              :key="`${currentPath}-${photo.name}-${startIndex + index}`"
+              :photo="photo"
+              :current-path="currentPath"
+              :load-immediately="true"
+              @click="openPhotoModal(photo)"
+              @image-loaded="handleImageLoaded"
             />
           </div>
 
           <!-- Bottom spacer for virtual scrolling -->
-          <div class="virtual-spacer-bottom" :style="{ height: spacerBottom + 'px' }"></div>
+          <div
+            class="virtual-spacer-bottom"
+            :style="{ height: spacerBottom + 'px' }"
+          />
         </div>
 
         <!-- Cache stats in development -->
-        <div v-if="showDebug" class="debug-info">
+        <div
+          v-if="showDebug"
+          class="debug-info"
+        >
           Visible: {{ visibleRange.start }}-{{ visibleRange.end }} of {{ allPhotos.length }} |
           Cached: {{ cacheStats.loaded }}/{{ cacheStats.totalCached }} |
           Queue: {{ cacheStats.queueLength }} |
@@ -82,12 +127,12 @@
 
       <!-- Photo Modal -->
       <PhotoModal
-          :show="showModal"
-          :photos="allPhotos"
-          :currentPhoto="selectedPhoto"
-          :currentPath="currentPath"
-          @close="closePhotoModal"
-          @navigate="navigatePhoto"
+        :show="showModal"
+        :photos="allPhotos"
+        :current-photo="selectedPhoto"
+        :current-path="currentPath"
+        @close="closePhotoModal"
+        @navigate="navigatePhoto"
       />
     </div>
   </WindowFrame>
@@ -356,7 +401,7 @@ export default {
       }
     }
 
-    const handleImageLoaded = (photo) => {
+    const handleImageLoaded = () => {
       loadedImagesCount.value++
       updateCacheStats()
     }

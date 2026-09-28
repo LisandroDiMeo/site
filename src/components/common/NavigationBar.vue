@@ -1,6 +1,9 @@
 <template>
   <div class="nav-bar">
-    <span class="back-link" @click="$emit('back')">
+    <span
+      class="back-link"
+      @click="$emit('back')"
+    >
       ← go back
     </span>
   </div>
@@ -8,7 +11,8 @@
 
 <script>
 export default {
-  name: 'NavigationBar'
+  name: 'NavigationBar',
+  emits: ['back']
 }
 </script>
 

@@ -1,27 +1,47 @@
 <template>
-  <div v-if="show" class="modal-overlay" @click="closeModal">
-    <div class="modal-content" @click.stop>
+  <div
+    v-if="show"
+    class="modal-overlay"
+    @click="closeModal"
+  >
+    <div
+      class="modal-content"
+      @click.stop
+    >
       <div class="modal-header">
         <span class="modal-title">{{ currentPhoto.name }}</span>
-        <button class="close-button" @click="closeModal">×</button>
+        <button
+          class="close-button"
+          @click="closeModal"
+        >
+          ×
+        </button>
       </div>
       
       <div class="modal-body">
-        <img :src="photoPath" :alt="currentPhoto.name" class="modal-image">
+        <img
+          :src="photoPath"
+          :alt="currentPhoto.name"
+          class="modal-image"
+        >
       </div>
       
       <div class="modal-footer">
         <button
-            class="nav-button prev"
-            @click="navigatePhotos(-1)"
-            :disabled="currentIndex === 0"
-        >←</button>
+          class="nav-button prev"
+          :disabled="currentIndex === 0"
+          @click="navigatePhotos(-1)"
+        >
+          ←
+        </button>
         <span>{{ currentIndex + 1 }} of {{ photos.length }}</span>
         <button
-            class="nav-button next"
-            @click="navigatePhotos(1)"
-            :disabled="currentIndex === photos.length - 1"
-        >→</button>
+          class="nav-button next"
+          :disabled="currentIndex === photos.length - 1"
+          @click="navigatePhotos(1)"
+        >
+          →
+        </button>
       </div>
     </div>
   </div>
@@ -50,6 +70,7 @@ export default {
       required: true
     }
   },
+  emits: ['close', 'navigate'],
   computed: {
     currentIndex() {
       return this.photos.findIndex(photo => photo.name === this.currentPhoto.name)

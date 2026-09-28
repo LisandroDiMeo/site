@@ -2,8 +2,15 @@
   <WindowFrame title="all posts">
     <NavigationBar @back="goBack" />
     
-    <div v-if="loading" class="loading-header">
-      <img src="/assets/hourglass.gif" alt="Loading" class="loading-icon">
+    <div
+      v-if="loading"
+      class="loading-header"
+    >
+      <img
+        src="/assets/hourglass.gif"
+        alt="Loading"
+        class="loading-icon"
+      >
     </div>
     
     <h3>All Posts</h3>

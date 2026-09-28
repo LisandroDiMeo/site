@@ -2,17 +2,27 @@
   <WindowFrame :title="title">
     <NavigationBar @back="goBack" />
     <div class="section-content">
-      <div v-if="loading" class="loading-container">
-        <img src="/assets/hourglass.gif" alt="Loading" class="loading-icon">
+      <div
+        v-if="loading"
+        class="loading-container"
+      >
+        <img
+          src="/assets/hourglass.gif"
+          alt="Loading"
+          class="loading-icon"
+        >
       </div>
 
-      <div v-else-if="empty" class="empty-state">
+      <div
+        v-else-if="empty"
+        class="empty-state"
+      >
         <slot name="empty">
           <p>No items yet.</p>
         </slot>
       </div>
 
-      <slot v-else></slot>
+      <slot v-else />
     </div>
   </WindowFrame>
 </template>

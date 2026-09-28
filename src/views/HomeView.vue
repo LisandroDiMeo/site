@@ -1,34 +1,34 @@
 <template>
   <WindowFrame title="Lisandro's Files">
     <div class="blank-content">
-    <div class="icon-grid">
-      <IconItem
-        icon="/assets/closedfolder.png"
-        hoverIcon="/assets/openfolder.png"
-        label="posts"
-        @click="navigateTo('posts')"
-      />
-      <IconItem
-        icon="/assets/camera.png"
-        label="photos"
-        @click="navigateTo('photos')"
-      />
-      <IconItem
-        icon="/assets/tree.png"
-        label="wishlist"
-        @click="navigateTo('wishlist')"
-      />
-      <IconItem
-        icon="/assets/monitor_tweak.png"
-        label="by me"
-        @click="navigateTo('by-me')"
-      />
-      <IconItem
-        icon="/assets/person_doc.png"
-        label="about me"
-        @click="navigateTo('about')"
-      />
-    </div>
+      <div class="icon-grid">
+        <IconItem
+          icon="/assets/closedfolder.png"
+          hover-icon="/assets/openfolder.png"
+          label="posts"
+          @click="navigateTo('posts')"
+        />
+        <IconItem
+          icon="/assets/camera.png"
+          label="photos"
+          @click="navigateTo('photos')"
+        />
+        <IconItem
+          icon="/assets/tree.png"
+          label="wishlist"
+          @click="navigateTo('wishlist')"
+        />
+        <IconItem
+          icon="/assets/monitor_tweak.png"
+          label="by me"
+          @click="navigateTo('by-me')"
+        />
+        <IconItem
+          icon="/assets/person_doc.png"
+          label="about me"
+          @click="navigateTo('about')"
+        />
+      </div>
     </div>
   </WindowFrame>
 </template>

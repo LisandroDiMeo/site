@@ -1,9 +1,14 @@
 <template>
-  <div class="icon-item" @mouseover="isHovered = true" @mouseleave="isHovered = false">
+  <div
+    class="icon-item"
+    @mouseover="isHovered = true"
+    @mouseleave="isHovered = false"
+  >
     <img 
       :src="isHovered && hoverIcon !== '' ? hoverIcon : icon"
       :alt="label" 
-      class="icon-image">
+      class="icon-image"
+    >
     <span class="icon-label">{{ label }}</span>
   </div>
 </template>

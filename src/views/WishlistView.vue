@@ -1,18 +1,39 @@
 <template>
-  <SectionLayout title="wishlist" :loading="loading" :empty="items.length === 0">
+  <SectionLayout
+    title="wishlist"
+    :loading="loading"
+    :empty="items.length === 0"
+  >
     <template #empty>
       <p>No items in the wishlist yet.</p>
     </template>
 
     <div class="wishlist-grid">
-      <div v-for="item in items" :key="item.id" class="wishlist-card">
-        <div v-if="item.image" class="card-image">
-          <img :src="item.image" :alt="item.title">
+      <div
+        v-for="item in items"
+        :key="item.id"
+        class="wishlist-card"
+      >
+        <div
+          v-if="item.image"
+          class="card-image"
+        >
+          <img
+            :src="item.image"
+            :alt="item.title"
+          >
         </div>
         <div class="card-body">
-          <h3 class="card-title">{{ item.title }}</h3>
-          <p class="card-description">{{ item.description }}</p>
-          <div v-if="item.links && item.links.length > 0" class="card-links">
+          <h3 class="card-title">
+            {{ item.title }}
+          </h3>
+          <p class="card-description">
+            {{ item.description }}
+          </p>
+          <div
+            v-if="item.links && item.links.length > 0"
+            class="card-links"
+          >
             <a
               v-for="(link, index) in item.links"
               :key="index"

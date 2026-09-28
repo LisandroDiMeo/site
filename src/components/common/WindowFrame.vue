@@ -2,10 +2,15 @@
   <div class="window">
     <div class="window-header">
       <span>{{ title }}</span>
-      <button class="close-btn" @click="handleClose">X</button>
+      <button
+        class="close-btn"
+        @click="handleClose"
+      >
+        X
+      </button>
     </div>
     <div class="window-body">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -19,6 +24,7 @@ export default {
       default: 'Window'
     }
   },
+  emits: ['close'],
   methods: {
     handleClose() {
       if (confirm('Are you sure you want to close this window?')) {

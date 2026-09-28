@@ -5,7 +5,10 @@
       <h2>Posts by Group</h2>
       <p>This page is under construction.</p>
       <div class="construction-icon">
-        <img src="/assets/closedfolder.png" alt="Under construction">
+        <img
+          src="/assets/closedfolder.png"
+          alt="Under construction"
+        >
       </div>
     </div>
   </WindowFrame>

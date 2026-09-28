@@ -4,19 +4,18 @@
     <div class="blank-content">
       <div class="icon-grid">
         <IconItem
-            icon="/assets/person_doc.png"
-            label="all posts"
-            @click="navigateTo('all-posts')"
+          icon="/assets/person_doc.png"
+          label="all posts"
+          @click="navigateTo('all-posts')"
         />
         <IconItem
-            icon="/assets/closedfolder.png"
-            hoverIcon="/assets/openfolder.png"
-            label="posts by group"
-            @click="navigateTo('posts-by-group')"
+          icon="/assets/closedfolder.png"
+          hover-icon="/assets/openfolder.png"
+          label="posts by group"
+          @click="navigateTo('posts-by-group')"
         />
       </div>
     </div>
-
   </WindowFrame>
 </template>
 
