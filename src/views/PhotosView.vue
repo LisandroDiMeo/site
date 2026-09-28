@@ -1,7 +1,6 @@
 <template>
   <AppShell
     :title-bar-text="titleBarText"
-    :has-overlay="allPhotos.length > 0"
   >
     <div class="header">
       <div class="prompt-line">
@@ -63,7 +62,17 @@
           :key="group.dayKey"
           class="day-group"
         >
-          <div class="day-label">
+          <router-link
+            v-if="!dayFilter"
+            :to="dayRoute(group.dayKey)"
+            class="day-label"
+          >
+            {{ group.label }}
+          </router-link>
+          <div
+            v-else
+            class="day-label"
+          >
             {{ group.label }}
           </div>
           <div class="photo-grid">
@@ -71,10 +80,10 @@
               v-for="photo in group.photos"
               :key="photo.name"
               :photo="photo"
-              :full-path="currentPath ? `${currentPath}/${photo.name}` : photo.name"
+              :full-path="nodePath ? `${nodePath}/${photo.name}` : photo.name"
               :day-label="photo.dayLabel"
+              :href="config.getPhotoUrl(nodePath ? `${nodePath}/${photo.name}` : photo.name)"
               load-immediately
-              @click="openLightbox(photo.index)"
             />
           </div>
         </div>
@@ -87,15 +96,6 @@
         No photos here yet.
       </div>
     </template>
-
-    <PhotoLightbox
-      v-if="lightboxIndex !== null"
-      :photos="flatPhotos"
-      :open-index="lightboxIndex"
-      :album-path="currentPath"
-      @close="lightboxIndex = null"
-      @navigate="lightboxIndex = $event"
-    />
   </AppShell>
 </template>
 
@@ -106,7 +106,6 @@ import AppShell from '@/components/shell/AppShell.vue'
 import AppNav from '@/components/shell/AppNav.vue'
 import PhotoAlbumCard from '@/components/photos/PhotoAlbumCard.vue'
 import PhotoTile from '@/components/photos/PhotoTile.vue'
-import PhotoLightbox from '@/components/photos/PhotoLightbox.vue'
 import config from '@/config/env'
 import { collectFirstPhotos } from '@/utils/photoAlbumCover'
 import { groupPhotosByDay } from '@/utils/photoDayGroups'
@@ -120,28 +119,77 @@ const loading = ref(true)
 const photoStructure = ref(null)
 const currentPath = ref(pathFromRoute(route.params.pathMatch))
 const pathNotFound = ref(false)
-const lightboxIndex = ref(null)
 
 const pathSegments = computed(() => currentPath.value.split('/').filter(Boolean))
 
-function getCurrentNode() {
-  if (!photoStructure.value) return null
-  if (!currentPath.value) return photoStructure.value
-
-  let node = photoStructure.value
-  for (const segment of pathSegments.value) {
-    node = node.children?.[segment]
-    if (!node) return null
-  }
-  return node
+const MONTH_ABBR = (name) => name.slice(0, 3).toUpperCase()
+const findChild = (node, segment) => {
+  if (!node?.children) return null
+  if (node.children[segment]) return segment
+  const lower = segment.toLowerCase()
+  return Object.keys(node.children).find((key) => key.toLowerCase() === lower) ?? null
 }
 
-const currentDirectories = computed(() => getCurrentNode()?.subdirs || [])
-const allPhotos = computed(() => getCurrentNode()?.file_details || [])
+// Walks the URL segments down the index. Besides literal folder names it accepts date shortcuts:
+// - a leading year (`2026/September/25`) is looked up inside whichever top-level album holds it
+// - a numeric last segment (`25`) matches a day folder (`25SEP`) or, when months are flat, filters
+//   the month's photos by their modified day.
+function resolvePath(root, segments) {
+  if (!root) return null
+  let node = root
+  let nodePath = ''
+  let dayFilter = null
 
-const dayGroupData = computed(() => groupPhotosByDay(allPhotos.value))
-const dayGroups = computed(() => dayGroupData.value.groups)
-const flatPhotos = computed(() => dayGroupData.value.flat)
+  const descend = (key) => {
+    node = node.children[key]
+    nodePath = nodePath ? `${nodePath}/${key}` : key
+  }
+
+  segments.forEach((segment, i) => {
+    if (!node || dayFilter) return (node = null)
+    let key = findChild(node, segment)
+
+    if (!key && i === 0 && /^\d{4}$/.test(segment)) {
+      const album = Object.keys(root.children || {}).find((k) => findChild(root.children[k], segment))
+      if (album) {
+        descend(album)
+        key = findChild(node, segment)
+      }
+    }
+
+    if (!key && /^\d{1,2}$/.test(segment) && i > 0) {
+      const day = String(Number(segment)).padStart(2, '0')
+      const parentName = segments[i - 1]
+      const monthKey = nodePath.split('/').at(-1) || parentName
+      key = findChild(node, `${day}${MONTH_ABBR(monthKey)}`)
+      if (!key) {
+        dayFilter = day
+        return
+      }
+    }
+
+    if (key) descend(key)
+    else node = null
+  })
+
+  return node ? { node, nodePath, dayFilter } : null
+}
+
+const resolved = computed(() => resolvePath(photoStructure.value, pathSegments.value))
+const nodePath = computed(() => resolved.value?.nodePath ?? '')
+const dayFilter = computed(() => resolved.value?.dayFilter ?? null)
+const getCurrentNode = () => resolved.value?.node ?? null
+
+const currentDirectories = computed(() => getCurrentNode()?.subdirs || [])
+const allPhotos = computed(() =>
+  (getCurrentNode()?.file_details || []).filter((photo) => {
+    if (photo.name.startsWith('._')) return false // macOS resource-fork junk
+    if (!dayFilter.value) return true
+    return (photo.modified || photo.created || '').slice(8, 10) === dayFilter.value
+  })
+)
+
+const dayGroups = computed(() => groupPhotosByDay(allPhotos.value).groups)
 
 const heading = computed(() => pathSegments.value.at(-1) || 'Photos')
 const promptLine = computed(() =>
@@ -161,7 +209,7 @@ function coversFor(dir) {
   const node = childNode(dir)
   return collectFirstPhotos(node).map((photo) => ({
     ...photo,
-    fullPath: currentPath.value ? `${currentPath.value}/${dir}/${photo.path}` : `${dir}/${photo.path}`
+    fullPath: nodePath.value ? `${nodePath.value}/${dir}/${photo.path}` : `${dir}/${photo.path}`
   }))
 }
 
@@ -176,8 +224,9 @@ function goUp() {
   router.push(segments.length ? `/photos/${segments.join('/')}` : '/photos')
 }
 
-function openLightbox(index) {
-  lightboxIndex.value = index
+function dayRoute(dayKey) {
+  const day = String(Number(dayKey.slice(8, 10)))
+  return dayKey ? `/photos/${currentPath.value}/${day}` : `/photos/${currentPath.value}`
 }
 
 async function loadPhotoStructure() {
@@ -201,7 +250,6 @@ watch(
     if (newPath === currentPath.value) return
     currentPath.value = newPath
     pathNotFound.value = false
-    lightboxIndex.value = null
     if (photoStructure.value && newPath && getCurrentNode() === null) {
       pathNotFound.value = true
     }
@@ -271,6 +319,7 @@ onMounted(loadPhotoStructure)
 .day-label {
   font-weight: 700;
   color: var(--f0-strong);
+  align-self: flex-start;
 }
 
 .photo-grid {

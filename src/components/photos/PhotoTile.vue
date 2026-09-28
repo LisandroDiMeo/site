@@ -1,11 +1,13 @@
 <template>
-  <button
+  <a
     ref="rootEl"
     class="photo-tile"
     :class="{ 'is-error': error }"
     :aria-label="`${photo.name}${dayLabel ? `, ${dayLabel}` : ''}`"
     :style="tileStyle"
-    @click="$emit('click')"
+    :href="href"
+    target="_blank"
+    rel="noopener"
   />
 </template>
 
@@ -18,10 +20,9 @@ const props = defineProps({
   photo: { type: Object, required: true },
   fullPath: { type: String, required: true },
   dayLabel: { type: String, default: '' },
+  href: { type: String, default: '' },
   loadImmediately: { type: Boolean, default: false }
 })
-
-defineEmits(['click'])
 
 const loading = ref(true)
 const error = ref(false)

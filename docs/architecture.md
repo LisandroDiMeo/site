@@ -7,7 +7,7 @@ src/
 ├── assets/styles/       # theme-f0.css (design tokens) + main.css (reset/base)
 ├── components/
 │   ├── shell/            # AppShell, AppNav — shared "Command Prompt" window chrome
-│   ├── photos/            # PhotoAlbumCard, PhotoTile, PhotoLightbox
+│   ├── photos/            # PhotoAlbumCard, PhotoTile
 │   └── writing/           # WritingArticle — fetches and renders one .md from the NAS
 ├── composables/          # useJsonLoader, useMarkdownArticle, useWritingManifest
 ├── config/                # Environment-driven configuration (env.js)
@@ -42,7 +42,6 @@ All routes except `/` are lazy-loaded for code splitting. Each route carries `me
 
 - **PhotoAlbumCard.vue** — album/subfolder card: 2×2 cover mosaic (via `collectFirstPhotos`), name, `total_photos`, approximate date. Loads its 4 cover images through `ImageCacheManager`.
 - **PhotoTile.vue** — a single square grid tile. Same IntersectionObserver + `ImageCacheManager` lazy-loading pattern as before, just restyled (no label/frame).
-- **PhotoLightbox.vue** — full-content overlay over the window (not a centered modal): close/counter/day label, prev/next, keyboard support (`Esc` closes, arrow keys navigate), and a focus trap across its three buttons while open. Loads the full-resolution image through `ImageCacheManager`.
 
 ## Services
 
@@ -85,7 +84,8 @@ Business logic is unchanged from before the redesign: `currentPath`/`getCurrentN
 - Subfolders render as `PhotoAlbumCard`s (mosaic cover, name, count).
 - A node's direct photos (`file_details`) are grouped by calendar day (derived from each file's `modified` timestamp, via `src/utils/photoDayGroups.js`) into a 6-column grid (3 on mobile), since `photo-index.json` has no day/place data of its own.
 - Album cover thumbnails are the first up-to-4 photos found via a depth-first walk of the subtree (`src/utils/photoAlbumCover.js`, memoized per node).
-- Clicking a tile opens `PhotoLightbox` instead of the old centered modal.
+- Tiles are plain links (`target="_blank"`) to the full-size photo on the NAS; there is no in-app viewer.
+- Date shortcuts: `/photos/2026/September/25` resolves the year inside whichever top-level album holds it (e.g. `RicohSOC`), and a numeric last segment matches a day folder (`25SEP`) or, for flat month folders, filters the month's photos by modified day. Day headings link to that day's route.
 
 ## Image Cache Manager (`data/ImageCacheManager.js`)
 
