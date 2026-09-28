@@ -23,10 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment variables (keep .env.example)
+# Environment variables (local dev only — .env.production is tracked on
+# purpose: it has no secrets and Cloudflare's build needs it in the repo)
 .env
 .env.local
-.env.production
 
 # Photos served from NAS - no longer stored in git
 public/assets/photos/
