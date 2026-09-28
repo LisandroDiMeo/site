@@ -165,32 +165,37 @@ class ImageCacheManager {
     }
 
     async _attemptDownload(path, options = {}) {
+        const wantsResize = !!(options.quality && options.quality < 1)
+
+        if (wantsResize) {
+            try {
+                const img = await this._loadImageElement(path, { crossOrigin: 'anonymous' })
+                try {
+                    return await this.resizeImage(img, options.quality)
+                } catch (err) {
+                    console.warn('Thumbnail resize failed, falling back to original image:', err.message)
+                    return path
+                }
+            } catch {
+                // The CORS-mode request itself was rejected by the server (not just a
+                // canvas taint on resize) — some hosts don't authorize anonymous
+                // cross-origin requests at all. Retry as a plain <img> so the photo
+                // still loads, just without quality reduction.
+                await this._loadImageElement(path, {})
+                return path
+            }
+        }
+
+        await this._loadImageElement(path, {})
+        return path
+    }
+
+    _loadImageElement(path, { crossOrigin } = {}) {
         return new Promise((resolve, reject) => {
             const img = new Image()
-
-            // Create a lower quality version by using canvas (if supported)
-            img.onload = () => {
-                if (options.quality && options.quality < 1) {
-                    this.resizeImage(img, options.quality)
-                        .then(resolve)
-                        .catch((err) => {
-                            console.warn('Thumbnail resize failed, falling back to original image:', err.message)
-                            resolve(path) // Fallback to original
-                        })
-                } else {
-                    resolve(path)
-                }
-            }
-
-            img.onerror = () => {
-                reject(new ImageCacheError('IMG_LOAD_ERROR', `Failed to load image: ${path}`))
-            }
-
-            // Add crossOrigin if needed for canvas operations
-            if (options.quality && options.quality < 1) {
-                img.crossOrigin = 'anonymous'
-            }
-
+            img.onload = () => resolve(img)
+            img.onerror = () => reject(new ImageCacheError('IMG_LOAD_ERROR', `Failed to load image: ${path}`))
+            if (crossOrigin) img.crossOrigin = crossOrigin
             img.src = path
         })
     }

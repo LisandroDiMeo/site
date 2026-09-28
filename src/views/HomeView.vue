@@ -1,59 +1,43 @@
 <template>
   <AppShell title-bar-text="Command Prompt — lisandro">
     <div class="version-banner">
-      Lisandro Dimeo [Version 27.0]<br>
-      (c) Almagro, Buenos Aires. All rights reserved.<br>
-      C:\&gt; color F0
+      Lisandro Di Meo [Version 27.0]<br>
+      (c) CABA, Argentina. All rights reserved.
     </div>
 
     <div class="intro">
       <h1 class="name">
-        Lisandro Dimeo
+        Lisandro Di Meo
       </h1>
       <p class="tagline">
-        Mobile engineer (Android, Swift, React Native) and university professor.
-        I write about apps, teaching, Japanese, and the things I collect.
+        Software Engineer and university professor.
+        Here I'll share a photograph diary, some toughts, and things I enjoy.
       </p>
     </div>
 
     <AppNav active-section="home" />
 
-    <div class="two-col">
-      <section class="col">
-        <div class="section-label">
-          &gt; now
-        </div>
-        <div
-          v-for="item in nowItems"
-          :key="item"
-          class="now-item"
-        >
-          <span class="dash">&mdash;&mdash;</span><span>{{ item }}</span>
-        </div>
-      </section>
-
-      <section
-        v-if="recentPosts.length"
-        class="col"
+    <section
+      v-if="recentPosts.length"
+      class="col"
+    >
+      <div class="section-label">
+        &gt; writing
+      </div>
+      <div
+        v-for="post in recentPosts"
+        :key="postId(post)"
+        class="writing-item"
       >
-        <div class="section-label">
-          &gt; writing
-        </div>
-        <div
-          v-for="post in recentPosts"
-          :key="postId(post)"
-          class="writing-item"
+        <span class="writing-date">{{ formatDate(post.createdAt) }}</span>
+        <RouterLink
+          :to="`/writing/${postId(post)}`"
+          class="writing-title"
         >
-          <span class="writing-date">{{ formatDate(post.createdAt) }}</span>
-          <RouterLink
-            :to="`/writing/${postId(post)}`"
-            class="writing-title"
-          >
-            {{ postTitle(post) }}
-          </RouterLink>
-        </div>
-      </section>
-    </div>
+          {{ postTitle(post) }}
+        </RouterLink>
+      </div>
+    </section>
 
     <section
       v-if="elsewhereLinks.length"
@@ -76,7 +60,7 @@
     </section>
 
     <div class="footer-prompt">
-      <span class="prompt-label">lisandro@almagro&gt;</span>
+      <span class="prompt-label">lisandro@dimeo&gt;</span>
       <span class="cursor" />
     </div>
   </AppShell>
@@ -89,12 +73,6 @@ import AppNav from '@/components/shell/AppNav.vue'
 import { usePostsStore } from '@/stores/posts'
 import config from '@/config/env'
 import { postId, postTitle } from '@/utils/writingSlug'
-
-const nowItems = [
-  'Leading Android on a fitness app',
-  'Building kokan.trade — vinyl, Pokémon cards & retro games',
-  'Studying Japanese · Japan in December'
-]
 
 const elsewhereLinks = [
   { label: 'linkedin', href: 'https://www.linkedin.com/in/lisandrodimeo' }
@@ -144,12 +122,6 @@ function formatDate(dateString) {
   margin: 0;
 }
 
-.two-col {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 56px;
-}
-
 .col {
   display: flex;
   flex-direction: column;
@@ -161,14 +133,9 @@ function formatDate(dateString) {
   font-weight: 700;
 }
 
-.now-item,
 .writing-item {
   display: flex;
   gap: 20px;
-}
-
-.dash {
-  color: var(--f0-muted);
 }
 
 .writing-date {
@@ -215,9 +182,4 @@ function formatDate(dateString) {
   animation: blink 1s steps(1) infinite;
 }
 
-@media (max-width: 768px) {
-  .two-col {
-    grid-template-columns: 1fr;
-  }
-}
 </style>
