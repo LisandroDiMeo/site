@@ -26,15 +26,15 @@
       </div>
       <div
         v-for="post in recentPosts"
-        :key="postId(post)"
+        :key="post.path"
         class="writing-item"
       >
-        <span class="writing-date">{{ formatDate(post.createdAt) }}</span>
+        <span class="writing-date">{{ formatDate(post.date, 7) }}</span>
         <RouterLink
-          :to="`/writing/${postId(post)}`"
+          :to="articleRoute(post)"
           class="writing-title"
         >
-          {{ postTitle(post) }}
+          {{ post.title }}
         </RouterLink>
       </div>
     </section>
@@ -67,33 +67,19 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import AppShell from '@/components/shell/AppShell.vue'
 import AppNav from '@/components/shell/AppNav.vue'
-import { usePostsStore } from '@/stores/posts'
-import config from '@/config/env'
-import { postId, postTitle } from '@/utils/writingSlug'
+import { useWritingManifest } from '@/composables/useWritingManifest'
+import { articleRoute, formatDate, recentArticles } from '@/utils/writingTree'
 
 const elsewhereLinks = [
   { label: 'linkedin', href: 'https://www.linkedin.com/in/lisandrodimeo' }
 ]
 
-const postsStore = usePostsStore()
+const { manifest } = useWritingManifest()
 
-onMounted(() => {
-  if (config.posts.enabled) postsStore.fetchPosts()
-})
-
-const recentPosts = computed(() =>
-  [...postsStore.posts]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 4)
-)
-
-function formatDate(dateString) {
-  if (!dateString) return ''
-  return new Date(dateString).toISOString().slice(0, 7)
-}
+const recentPosts = computed(() => recentArticles(manifest.value, 4))
 </script>
 
 <style scoped>

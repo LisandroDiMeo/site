@@ -10,7 +10,7 @@ Here you will find more about me, my writing, and one of my recent favorite hobb
 - Vue 3 (Composition API) + Vue Router + Pinia
 - Vite
 - Axios
-- `marked` + `DOMPurify` (markdown rendering for Writing/Article posts)
+- `marked` + `DOMPurify` (markdown rendering for Writing articles)
 - Python / Paramiko (photo indexing)
 
 ## Installation
@@ -19,13 +19,13 @@ Copy `.env.example` to `.env` (and fill in the values for your setup, see [Deplo
 
 ```bash
 npm install
-npm run dev:local   # local mode: posts API + filesystem/NAS photos
+npm run dev:local   # local mode: filesystem/NAS photos
 ```
 
 Other useful scripts:
 
 ```bash
-npm run dev              # dev server without local env (posts API disabled)
+npm run dev              # dev server without local env
 npm run build:local       # production build using local env
 npm run build:production  # production build for Cloudflare Pages
 npm run preview           # preview a production build

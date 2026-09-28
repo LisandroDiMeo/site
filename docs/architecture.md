@@ -7,14 +7,14 @@ src/
 ├── assets/styles/       # theme-f0.css (design tokens) + main.css (reset/base)
 ├── components/
 │   ├── shell/            # AppShell, AppNav — shared "Command Prompt" window chrome
-│   └── photos/            # PhotoAlbumCard, PhotoTile, PhotoLightbox
-├── composables/          # useJsonLoader, useMarkdownArticle
+│   ├── photos/            # PhotoAlbumCard, PhotoTile, PhotoLightbox
+│   └── writing/           # WritingArticle — fetches and renders one .md from the NAS
+├── composables/          # useJsonLoader, useMarkdownArticle, useWritingManifest
 ├── config/                # Environment-driven configuration (env.js)
 ├── data/                  # ImageCacheManager (singleton image cache)
 ├── router/                # Vue Router (7 routes, lazy-loaded except /)
-├── services/              # Axios instance + posts REST API service
-├── stores/                # Pinia store for posts
-├── utils/                 # frontMatter, markdownRenderer, writingSlug, photoDayGroups, photoAlbumCover
+├── services/              # writing.service (fetches writing-index.json and articles from the NAS)
+├── utils/                 # frontMatter, markdownRenderer, writingTree, photoDayGroups, photoAlbumCover
 └── views/                 # Page-level components
 ```
 
@@ -23,8 +23,7 @@ src/
 | Route | View | Description |
 |-------|------|--------------|
 | `/` | HomeView | Landing page: version banner, name/tagline, `now`/`writing`/`elsewhere` sections |
-| `/writing` | WritingView | Posts grouped by category (from `categories[0]`), with jump-to anchors |
-| `/writing/:id` | ArticleView | Renders a post's markdown content, keyed by post `id`/`_id` |
+| `/writing/:pathMatch(.*)*` | WritingView | Folder browser over `writing-index.json` (NAS); if the path is an article (file name without `.md`) it renders `WritingArticle` |
 | `/photos/:pathMatch(.*)*` | PhotosView | Nested photo browser (albums/subfolders + day-grouped photo grids) backed by `photo-index.json` |
 | `/projects` | ProjectsView | Dated project list loaded from `/by-me.json` |
 | `/hello` | HelloView | Short bio + `elsewhere` links |
@@ -45,69 +44,39 @@ All routes except `/` are lazy-loaded for code splitting. Each route carries `me
 - **PhotoTile.vue** — a single square grid tile. Same IntersectionObserver + `ImageCacheManager` lazy-loading pattern as before, just restyled (no label/frame).
 - **PhotoLightbox.vue** — full-content overlay over the window (not a centered modal): close/counter/day label, prev/next, keyboard support (`Esc` closes, arrow keys navigate), and a focus trap across its three buttons while open. Loads the full-resolution image through `ImageCacheManager`.
 
-## State Management
-
-### Posts Store (`stores/posts.js`)
-
-Pinia store managing posts data — unchanged from before:
-
-- **State**: `posts[]`, `currentPost`, `loading`, `error`
-- **Getters**: `totalPosts()`, `postsByCategory(category)`, `postsByGroup(groupId)`
-- **Actions**: `fetchPosts()`, `createPost(postData)`, `deletePost(id)`
-
-All actions call the backend through `postsService` and handle loading/error states. `WritingView`/`ArticleView`/`HomeView` all read from this store and degrade to an empty/hidden state when `config.posts.enabled` is `false` (cloud deployments).
-
 ## Services
 
-### API Client (`services/api.js`)
+### Writing service (`services/writing.service.js`)
 
-Axios instance with:
-- Base URL from `config.apiBaseUrl`
-- 10-second timeout
-- Request interceptor: injects Bearer token from localStorage
-- Response interceptor: extracts `response.data`, handles 401/404/500
+Fetches `writing-index.json` (memoised for the page lifetime, retried after a failure) and article `.md` files from `config.externalWritingUrl`. Views go through `useWritingManifest()`; tree helpers (path resolution, sorting, routes) live in `utils/writingTree.js`. If `VITE_EXTERNAL_WRITING_URL` is unset, `/writing` shows "Writing isn't available in this deployment."
 
-### Posts Service (`services/posts.service.js`)
+### Writing content format
 
-REST API layer over the Axios client (unchanged contract):
-
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| `getAllPosts(params)` | GET /posts | Fetch posts (limit, skip, sort_by, ascending) |
-| `getPostById(id)` | GET /posts/{id} | Fetch single post |
-| `createPost(data)` | POST /posts | Create post |
-| `updatePost(id, data)` | PUT /posts/{id} | Update post |
-| `deletePost(id)` | DELETE /posts/{id} | Delete post |
-| `searchPosts(query, limit)` | GET /posts/search | Full-text search |
-| `getPostsByCategory(category)` | GET /posts/category/{cat} | Filter by category |
-| `addGroupsToPost(id, groupIds)` | POST /posts/{id}/groups | Associate groups |
-| `removeGroupsFromPost(id, groupIds)` | DELETE /posts/{id}/groups | Remove groups |
-
-All methods are feature-gated by `config.posts.enabled` (requires `VITE_API_BASE_URL` to be set).
-
-### Post content format (Writing/Article)
-
-The backend post model is still just `{ id/_id, content, categories, groups, createdAt }` — there's no `title`, no separate tags, no modified date, no rich body. Instead, `content` is treated as a **markdown document with an optional front-matter block**, parsed and rendered entirely client-side (`src/utils/frontMatter.js`, `src/utils/markdownRenderer.js`, `src/composables/useMarkdownArticle.js`):
+Articles are plain `.md` files from the Obsidian vault with an optional front-matter block (`src/utils/frontMatter.js`; `key: value` lines, not YAML), rendered client-side (`src/utils/markdownRenderer.js`, `src/composables/useMarkdownArticle.js`). `sync-writing.py` copies the same keys into the manifest so listings don't need to download each file:
 
 ```
 ---
-title: Play Billing upgrades without tears
-modified: 2026-08-20
-note: Updated after shipping the second round of plan changes.
+title: Capítulo 13
+category: Lecturas/Mishima
+tags: mishima, nieve-de-primavera
+modified: 2026-09-20
+note: Optional one-line summary.
+draft: false
 ---
 Body in markdown...
 ```
 
-- If `content` doesn't start with `---`, there's no front-matter and the whole string is the body (old posts still render, just without a real title/note).
-- `categories[0]` groups the post into a section on `/writing` (the "jump to" anchors); `categories.slice(1)` are shown as `#tag`s on the article page.
-- Publish date is `createdAt`; modified date comes from `meta.modified` and is omitted if absent — nothing is invented.
+- Without front-matter the title falls back to the file name and the date to the file's mtime (set in the manifest).
+- `category` (else the folder name) is the section label in the article path; `tags` are shown as `#tag`s.
+- The URL mirrors the vault: `/writing/<folders>/<file name without .md>`.
 - Markdown is rendered with `marked` + a custom renderer (`src/utils/markdownRenderer.js`) for three conventions on top of standard markdown:
   - A `*italic paragraph*` immediately following a `> blockquote` is styled as a short annotation (manu.zone-style asterisk comment).
   - Two images back-to-back in the same paragraph (`![a](x) ![b](y)`) render as a side-by-side figure pair with captions.
   - A paragraph containing only a bare link renders as a "reference card" (label + title + domain).
-  - Relative image `src`s are resolved through `config.getPhotoUrl()`; absolute URLs are used as-is. These body images are **not** part of `photo-index.json`/`ImageCacheManager` — they're author-supplied URLs.
+  - Relative image `src`s are resolved through `config.getPhotoUrl()`; absolute URLs are used as-is.
 - Output HTML is sanitized with `DOMPurify` before being rendered via `v-html`.
-- The article route uses the post's real `id`/`_id` as the URL param (`/writing/:id`), not a generated slug.
+
+See `docs/deployment.md` for the sync script and NAS/CORS requirements.
 
 ## Photo browsing (`views/PhotosView.vue`)
 

@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal site ("retro-site") built with Vue 3 (Composition API), styled as a Windows 97 desktop. Combines a professional/social presentation card with a photo gallery, a posts/blog feature backed by a separate API, and a wishlist.
+Personal site ("retro-site") built with Vue 3 (Composition API), styled as a Windows 97 desktop. Combines a professional/social presentation card with a photo gallery, a writing section fed from an Obsidian vault via the NAS, and a wishlist.
 
 ## Commands
 
 ```bash
 npm run dev              # Dev server on port 3000
-npm run dev:local        # Dev server with .env (local mode: posts API + filesystem/NAS photos)
+npm run dev:local        # Dev server with .env (local mode: filesystem/NAS photos)
 npm run build:local      # Production build using local env
 npm run build:production # Production build for Cloudflare Pages (.env.production)
 npm run preview          # Preview a production build
@@ -35,14 +35,14 @@ Full details live in `docs/architecture.md`, `docs/deployment.md`, and `docs/des
 
 The app behaves differently depending on `VITE_DEPLOYMENT_TYPE`, read via `src/config/env.js`:
 
-- **local** (`.env`): posts API enabled against `http://localhost:8090`, photos served from filesystem or NAS.
-- **cloud** (`.env.production`, Cloudflare Pages): posts API disabled entirely (no `VITE_API_BASE_URL`), photos served only from the external NAS URL (`VITE_EXTERNAL_PHOTOS_URL`).
+- **local** (`.env`): photos served from filesystem or NAS.
+- **cloud** (`.env.production`, Cloudflare Pages): photos served only from the external NAS URL (`VITE_EXTERNAL_PHOTOS_URL`).
 
-Any feature touching posts must be feature-gated on `config.posts.enabled`, since it's unavailable in cloud deployments. Check `src/config/env.js` for the full config shape and helper flags (`isLocal`, `isCloud`, `isDev`, `isProd`, `getPhotoUrl()`).
+Writing comes from the NAS (`VITE_EXTERNAL_WRITING_URL`), not an API. Check `src/config/env.js` for the full config shape and helper flags (`isLocal`, `isCloud`, `isDev`, `isProd`, `getPhotoUrl()`, `getWritingUrl()`).
 
-### Data flow for posts
+### Data flow for writing
 
-`views` → `stores/posts.js` (Pinia) → `services/posts.service.js` → `services/api.js` (Axios instance with auth interceptor, 10s timeout, response unwrapping). Keep this layering when adding endpoints — views should not call the service or Axios instance directly.
+`views` → `composables/useWritingManifest.js` → `services/writing.service.js` (fetches `writing-index.json` and `.md` files from the NAS). The manifest and files are published by `sync-writing.py`; see `docs/deployment.md`. Views should not call `fetch` directly.
 
 ### Photo gallery
 

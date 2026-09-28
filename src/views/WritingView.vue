@@ -1,71 +1,96 @@
 <template>
-  <AppShell title-bar-text="Command Prompt — lisandro\writing">
+  <AppShell :title-bar-text="titleBarText">
     <div class="header">
       <div class="prompt-line">
-        C:\lisandro&gt; cd writing
+        {{ promptLine }}
       </div>
       <AppNav active-section="writing" />
     </div>
 
-    <div class="page-heading">
-      <h1>Writing</h1>
-      <div class="page-subtitle">
-        Notes, essays and annotations. Grouped by topic, newest first.
-      </div>
-    </div>
-
-    <div
-      v-if="!config.posts.enabled"
-      class="empty-state"
-    >
-      Writing isn't available in this deployment.
-    </div>
-    <div
-      v-else-if="postsStore.loading"
-      class="empty-state"
-    >
-      Loading&hellip;
-    </div>
-    <div
-      v-else-if="!sections.length"
-      class="empty-state"
-    >
-      Nothing published yet.
-    </div>
+    <template v-if="resolved?.type === 'article'">
+      <WritingArticle
+        :entry="resolved.entry"
+        :dir="resolved.dir"
+      />
+    </template>
 
     <template v-else>
-      <div class="jump-to">
-        <span class="jump-label">jump to:</span>
-        <a
-          v-for="section in sections"
-          :key="section.section"
-          :href="`#${anchorFor(section.section)}`"
+      <div class="page-heading">
+        <RouterLink
+          v-if="pathSegments.length"
+          :to="parentRoute"
+          class="up-link"
         >
-          {{ section.section }} ({{ section.posts.length }})
-        </a>
+          &larr; cd ..
+        </RouterLink>
+        <h1>{{ heading }}</h1>
+        <div
+          v-if="!pathSegments.length"
+          class="page-subtitle"
+        >
+          Notes, essays and annotations. Folders first, newest first.
+        </div>
       </div>
 
-      <div class="sections-grid">
-        <section
-          v-for="section in sections"
-          :id="anchorFor(section.section)"
-          :key="section.section"
-          class="category"
+      <div
+        v-if="!configured"
+        class="empty-state"
+      >
+        Writing isn't available in this deployment.
+      </div>
+      <div
+        v-else-if="loading"
+        class="empty-state"
+      >
+        Loading&hellip;
+      </div>
+      <div
+        v-else-if="error"
+        class="empty-state"
+      >
+        Couldn't load the writing index.
+      </div>
+      <div
+        v-else-if="!resolved"
+        class="empty-state"
+      >
+        Directory not found.
+      </div>
+      <div
+        v-else-if="!resolved.node.subdirs.length && !resolved.node.file_details.length"
+        class="empty-state"
+      >
+        Nothing published yet.
+      </div>
+
+      <div
+        v-else
+        class="entries"
+      >
+        <div
+          v-for="dir in resolved.node.subdirs"
+          :key="dir"
+          class="entry-row"
         >
-          <div class="section-label">
-            &gt; {{ section.section }}
-          </div>
-          <div
-            v-for="post in section.posts"
-            :key="postId(post)"
-            class="post-row"
-          >
-            <span class="post-date">{{ formatDate(post.createdAt) }}</span>
-            <RouterLink :to="`/writing/${postId(post)}`">
-              {{ postTitle(post) }}
-            </RouterLink>
-          </div>
-        </section>
+          <span class="entry-count">{{ resolved.node.children[dir].total_articles }} notes</span>
+          <RouterLink :to="folderRoute(childPath(dir))">
+            {{ dir }}/
+          </RouterLink>
+        </div>
+        <div
+          v-for="entry in files"
+          :key="entry.path"
+          class="entry-row"
+        >
+          <span class="entry-date">{{ formatDate(entry.date) }}</span>
+          <span>
+            <RouterLink :to="articleRoute(entry)">{{ entry.title }}</RouterLink>
+            <span
+              v-if="entry.tags.length"
+              class="entry-tags"
+            >{{ entry.tags.map((tag) => `#${tag}`).join(' ') }}</span>
+          </span>
+        </div>
       </div>
     </template>
 
@@ -77,29 +102,46 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import AppShell from '@/components/shell/AppShell.vue'
 import AppNav from '@/components/shell/AppNav.vue'
-import { usePostsStore } from '@/stores/posts'
-import config from '@/config/env'
-import { groupPostsByCategory, postId, postTitle } from '@/utils/writingSlug'
+import WritingArticle from '@/components/writing/WritingArticle.vue'
+import { useWritingManifest } from '@/composables/useWritingManifest'
+import {
+  articleRoute,
+  folderRoute,
+  formatDate,
+  pathFromRoute,
+  resolveWritingPath,
+  sortByDateDesc
+} from '@/utils/writingTree'
 
-const postsStore = usePostsStore()
+const route = useRoute()
+const { manifest, loading, error, configured } = useWritingManifest()
 
-onMounted(() => {
-  if (config.posts.enabled) postsStore.fetchPosts()
+const currentPath = computed(() => pathFromRoute(route.params.pathMatch))
+const pathSegments = computed(() => currentPath.value.split('/').filter(Boolean))
+const resolved = computed(() => resolveWritingPath(manifest.value, currentPath.value))
+
+const files = computed(() => sortByDateDesc(resolved.value?.node?.file_details || []))
+
+const heading = computed(() => pathSegments.value.at(-1) || 'Writing')
+const parentRoute = computed(() => folderRoute(pathSegments.value.slice(0, -1).join('/')))
+
+const promptLine = computed(() => {
+  if (!pathSegments.value.length) return 'C:\\lisandro> cd writing'
+  const dirs = resolved.value?.type === 'article' ? pathSegments.value.slice(0, -1) : pathSegments.value
+  const prefix = ['C:\\lisandro\\writing', ...dirs].join('\\')
+  return resolved.value?.type === 'article'
+    ? `${prefix}> type ${pathSegments.value.at(-1)}`
+    : `${prefix}> dir`
 })
+const titleBarText = computed(() =>
+  ['Command Prompt — lisandro\\writing', ...pathSegments.value].join('\\')
+)
 
-const sections = computed(() => groupPostsByCategory(postsStore.posts))
-
-function anchorFor(section) {
-  return section.toLowerCase().replace(/\s+/g, '-')
-}
-
-function formatDate(dateString) {
-  if (!dateString) return ''
-  return new Date(dateString).toISOString().slice(0, 10)
-}
+const childPath = (dir) => (currentPath.value ? `${currentPath.value}/${dir}` : dir)
 </script>
 
 <style scoped>
@@ -135,27 +177,12 @@ function formatDate(dateString) {
   color: var(--f0-muted);
 }
 
-.jump-to {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 22px;
-  padding: 10px 0;
-  border-top: 1px dashed var(--f0-rule);
-  border-bottom: 1px dashed var(--f0-rule);
-  font-size: 16px;
-}
-
-.jump-label {
+.up-link {
   color: var(--f0-muted);
+  font-size: var(--fs-meta);
 }
 
-.sections-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 40px 56px;
-}
-
-.category {
+.entries {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -166,15 +193,22 @@ function formatDate(dateString) {
   font-weight: 700;
 }
 
-.post-row {
+.entry-row {
   display: grid;
   grid-template-columns: 96px minmax(0, 1fr);
   gap: 20px;
   align-items: baseline;
 }
 
-.post-date {
+.entry-date,
+.entry-count {
   color: var(--f0-muted);
+}
+
+.entry-tags {
+  margin-left: 12px;
+  color: var(--f0-muted);
+  font-size: var(--fs-meta);
 }
 
 .footer-prompt {
@@ -196,8 +230,9 @@ function formatDate(dateString) {
 }
 
 @media (max-width: 768px) {
-  .sections-grid {
+  .entry-row {
     grid-template-columns: 1fr;
+    gap: 2px;
   }
 }
 </style>

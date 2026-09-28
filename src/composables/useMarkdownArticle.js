@@ -7,7 +7,7 @@ import { renderMarkdown } from '@/utils/markdownRenderer'
 export function useMarkdownArticle(postRef) {
   const parsed = computed(() => parseFrontMatter(unref(postRef)?.content))
 
-  const title = computed(() => parsed.value.meta.title || 'Untitled')
+  const title = computed(() => parsed.value.meta.title || unref(postRef)?.title || 'Untitled')
   const modified = computed(() => parsed.value.meta.modified || null)
   const note = computed(() => parsed.value.meta.note || null)
   const categories = computed(() => unref(postRef)?.categories || [])

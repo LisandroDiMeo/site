@@ -9,15 +9,9 @@ const routes = [
     meta: { section: 'home' }
   },
   {
-    path: '/writing',
+    path: '/writing/:pathMatch(.*)*',
     name: 'writing',
     component: () => import('@/views/WritingView.vue'),
-    meta: { section: 'writing' }
-  },
-  {
-    path: '/writing/:id',
-    name: 'article',
-    component: () => import('@/views/ArticleView.vue'),
     meta: { section: 'writing' }
   },
   {

@@ -6,7 +6,7 @@ The site supports two deployment modes controlled by environment variables:
 
 | | Local | Cloud (Cloudflare Pages) |
 |---|---|---|
-| Posts API | Enabled (localhost:8090) | Disabled |
+| Writing | External NAS (`VITE_EXTERNAL_WRITING_URL`) | External NAS (`VITE_EXTERNAL_WRITING_URL`) |
 | Photos | Filesystem or external NAS | External NAS only |
 | Config file | `.env` | `.env.production` |
 | Build command | `npm run build:local` | `npm run build:production` |
@@ -18,10 +18,10 @@ The site supports two deployment modes controlled by environment variables:
 ```
 VITE_APP_TITLE=Lisandro's Site
 VITE_DEPLOYMENT_TYPE=local
-VITE_API_BASE_URL=http://localhost:8090
 VITE_PHOTOS_MODE=filesystem
 VITE_LOCAL_PHOTOS_PATH=/assets/photos
 VITE_EXTERNAL_PHOTOS_URL=https://sarusage.myasustor.com/photos
+VITE_EXTERNAL_WRITING_URL=https://sarusage.myasustor.com/writing
 ```
 
 ### Production (`.env.production`)
@@ -29,14 +29,30 @@ VITE_EXTERNAL_PHOTOS_URL=https://sarusage.myasustor.com/photos
 ```
 VITE_APP_TITLE=Lisandro's Site
 VITE_DEPLOYMENT_TYPE=cloud
-VITE_API_BASE_URL=
 VITE_PHOTOS_MODE=static
 VITE_LOCAL_PHOTOS_PATH=/assets/photos
 VITE_BASE_URL=/
 VITE_EXTERNAL_PHOTOS_URL=https://sarusage.myasustor.com/photos
+VITE_EXTERNAL_WRITING_URL=https://sarusage.myasustor.com/writing
 ```
 
-In cloud mode, the posts API is disabled (no `VITE_API_BASE_URL`), and photos are served from the external NAS URL.
+In cloud mode photos are served from the external NAS URL.
+
+## Writing (NAS)
+
+Articles live in the Obsidian vault and are published to the NAS by `sync-writing.py`; the site reads them at runtime, so adding a note never requires a deploy.
+
+```
+python sync-writing.py --user <user> --password <pass>           # upload changed .md + write writing-index.json
+python sync-writing.py --dry-run                                  # list what would be synced (no connection)
+python sync-writing.py --user <user> --password <pass> --prune    # also delete remote .md removed from the vault
+```
+
+- Defaults: vault `~/Documents/Lecturas/lecturas`, remote `/volume1/Web/writing`, host `192.168.1.80`. Folders excluded by default are listed in `DEFAULT_EXCLUDES` in the script (override with repeated `--exclude`).
+- Only `.md` files are uploaded. Notes with `draft: true` in the front-matter are skipped.
+- `writing-index.json` is written next to the articles on the NAS (never to the repo). It has the same recursive shape as `photo-index.json` (`children`, `subdirs`, `file_details`), where each `file_details` entry carries `path`, `title`, `date`, `category`, `tags`, `note`.
+- The site fetches `<VITE_EXTERNAL_WRITING_URL>/writing-index.json` and each article's `.md`, so the NAS must send `Access-Control-Allow-Origin` for the site's origin. Check with:
+  `curl -sI -H "Origin: https://<site-domain>" https://sarusage.myasustor.com/writing/writing-index.json | grep -i access-control`
 
 ## Vite Configuration
 
