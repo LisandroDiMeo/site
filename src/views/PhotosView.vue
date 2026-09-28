@@ -107,6 +107,7 @@ import AppNav from '@/components/shell/AppNav.vue'
 import PhotoAlbumCard from '@/components/photos/PhotoAlbumCard.vue'
 import PhotoTile from '@/components/photos/PhotoTile.vue'
 import PhotoLightbox from '@/components/photos/PhotoLightbox.vue'
+import config from '@/config/env'
 import { collectFirstPhotos } from '@/utils/photoAlbumCover'
 import { groupPhotosByDay } from '@/utils/photoDayGroups'
 
@@ -182,7 +183,7 @@ function openLightbox(index) {
 async function loadPhotoStructure() {
   try {
     loading.value = true
-    const response = await fetch('/photo-index.json')
+    const response = await fetch(config.getPhotoIndexUrl(), { cache: 'no-cache' })
     if (!response.ok) throw new Error('Failed to load photo index')
     photoStructure.value = await response.json()
     if (currentPath.value && getCurrentNode() === null) pathNotFound.value = true

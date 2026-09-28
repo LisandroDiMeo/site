@@ -29,6 +29,11 @@ export const config = {
     return `${config.localPhotosPath}/${photoPath}`
   },
 
+  // The photo index is published on the NAS next to the photos (see generate-photo-directory.py);
+  // without an external URL, fall back to a copy served by the app itself.
+  getPhotoIndexUrl: () =>
+    config.externalPhotosUrl ? `${config.externalPhotosUrl}/photo-index.json` : '/photo-index.json',
+
   // Writing handling: each path segment is encoded (vault names contain spaces and accents)
   getWritingUrl: (writingPath) =>
     `${config.externalWritingUrl}/${writingPath.split('/').map(encodeURIComponent).join('/')}`

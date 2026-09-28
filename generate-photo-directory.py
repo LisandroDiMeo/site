@@ -6,8 +6,10 @@ import paramiko
 from pathlib import Path, PurePosixPath
 from datetime import datetime
 
+INDEX_NAME = 'photo-index.json'
 
-def generate_file_index(ssh_user, ssh_password, ssh_host='192.168.0.147', remote_base='/volume1/Web/photos'):
+
+def generate_file_index(ssh_user, ssh_password, ssh_host='192.168.1.80', remote_base='/volume1/Web/photos', write_local=False):
     # Image extensions to include
     image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'}
 
@@ -22,9 +24,12 @@ def generate_file_index(ssh_user, ssh_password, ssh_host='192.168.0.147', remote
     print(f"Omiting {photos_to_omit_list}")
     print(f"Omiting {photos_to_omit_dirs}")
 
-    # Output path
+    # The index is published next to the photos on the NAS; the site fetches it at runtime.
+    remote_index = f'{remote_base.rstrip("/")}/{INDEX_NAME}'
+
+    # Optional local copy (public/photo-index.json), only written with --local
     script_dir = Path(__file__).parent
-    output_path = script_dir / 'public' / 'photo-index.json'
+    output_path = script_dir / 'public' / INDEX_NAME
 
     # Connect via SSH/SFTP
     print(f"Connecting to {ssh_host} as {ssh_user}...")
@@ -116,20 +121,25 @@ def generate_file_index(ssh_user, ssh_password, ssh_host='192.168.0.147', remote
     print(f'Scanning remote directory: {ssh_host}:{remote_base}')
     file_structure = build_structure(remote_base)
 
+    file_structure['generated_at'] = datetime.now().isoformat()
+    index_json = json.dumps(file_structure, indent=2, ensure_ascii=False)
+
+    # Publish the index on the NAS
+    with sftp.open(remote_index, 'w') as remote_file:
+        remote_file.write(index_json.encode('utf-8'))
+    print(f'Published {ssh_host}:{remote_index}')
+
     # Close SFTP/SSH
     sftp.close()
     ssh.close()
     print("Connection closed.")
 
-    # Ensure output directory exists
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # Write the JSON file
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(file_structure, f, indent=2, ensure_ascii=False)
+    if write_local:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(index_json, encoding='utf-8')
+        print(f'Local copy: {output_path}')
 
     print('Photo index generated successfully!')
-    print(f'Output file: {output_path}')
     print(f'Root directories found: {file_structure["subdirs"]}')
     print(f'Total photos found: {file_structure["total_photos"]}')
 
@@ -142,8 +152,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate photo index from remote SSH/SFTP server')
     parser.add_argument('--user', required=True, help='SSH username')
     parser.add_argument('--password', required=True, help='SSH password')
-    parser.add_argument('--host', default='192.168.0.147', help='SSH host (default: 192.168.0.147)')
+    parser.add_argument('--host', default='192.168.1.80', help='SSH host (default: 192.168.1.80)')
     parser.add_argument('--remote-path', default='/volume1/Web/photos', help='Remote photos path (default: /volume1/Web/photos)')
+    parser.add_argument('--local', action='store_true', help='Also write a copy to public/photo-index.json')
     args = parser.parse_args()
 
-    generate_file_index(args.user, args.password, args.host, args.remote_path)
+    generate_file_index(args.user, args.password, args.host, args.remote_path, args.local)

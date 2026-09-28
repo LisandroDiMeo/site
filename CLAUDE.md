@@ -25,7 +25,7 @@ Photo index regeneration (requires SSH/SFTP access to the NAS):
 python generate-photo-directory.py --user <ssh_user> --password <ssh_password> --host <nas_ip> --remote-path <photo_directory>
 ```
 
-This writes `public/photo-index.json`, which the photo gallery depends on, respecting exclusions in `public/dont-show.json`.
+This publishes `photo-index.json` on the NAS (`<remote-path>/photo-index.json`, served at `<VITE_EXTERNAL_PHOTOS_URL>/photo-index.json`), which the photo gallery fetches at runtime, respecting exclusions in `public/dont-show.json`. Pass `--local` to also write `public/photo-index.json` (fallback used when `VITE_EXTERNAL_PHOTOS_URL` is unset).
 
 ## Architecture
 
