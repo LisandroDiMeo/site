@@ -39,8 +39,10 @@ const urls = reactive(new Map())
 const subscriptions = []
 
 function fullUrl(cover) {
-  return config.getPhotoUrl(cover.fullPath)
+  return config.getPhotoVariantUrl(cover.fullPath, 'thumb', cover.modified)
 }
+
+const loadOptions = (cover) => ({ fallback: config.getPhotoUrl(cover.fullPath), fallbackQuality: 0.6 })
 
 onMounted(() => {
   for (const cover of props.covers) {
@@ -48,16 +50,17 @@ onMounted(() => {
     const callback = (data) => {
       if (data.status === 'loaded') urls.set(url, data.url)
     }
-    subscriptions.push([url, callback])
-    imageCache.subscribe(url, callback, { quality: 0.6 })
-    imageCache.loadImage(url, { quality: 0.6 }).catch(() => {})
+    const options = loadOptions(cover)
+    subscriptions.push([url, callback, options])
+    imageCache.subscribe(url, callback, options)
+    imageCache.loadImage(url, options).catch(() => {})
   }
 })
 
 onUnmounted(() => {
-  for (const [url, callback] of subscriptions) {
-    imageCache.unsubscribe(url, callback, { quality: 0.6 })
-    imageCache.cancel(url, { quality: 0.6 })
+  for (const [url, callback, options] of subscriptions) {
+    imageCache.unsubscribe(url, callback, options)
+    imageCache.cancel(url, options)
   }
 })
 

@@ -84,6 +84,7 @@
               :day-label="photo.dayLabel"
               :href="config.getPhotoUrl(nodePath ? `${nodePath}/${photo.name}` : photo.name)"
               load-immediately
+              @open="openViewer(photo)"
             />
           </div>
         </div>
@@ -95,6 +96,13 @@
       >
         No photos here yet.
       </div>
+
+      <PhotoViewer
+        v-if="viewerIndex !== null && viewerPhotos[viewerIndex]"
+        v-model:index="viewerIndex"
+        :photos="viewerPhotos"
+        @close="viewerIndex = null"
+      />
     </template>
   </AppShell>
 </template>
@@ -106,6 +114,7 @@ import AppShell from '@/components/shell/AppShell.vue'
 import AppNav from '@/components/shell/AppNav.vue'
 import PhotoAlbumCard from '@/components/photos/PhotoAlbumCard.vue'
 import PhotoTile from '@/components/photos/PhotoTile.vue'
+import PhotoViewer from '@/components/photos/PhotoViewer.vue'
 import config from '@/config/env'
 import { collectFirstPhotos } from '@/utils/photoAlbumCover'
 import { groupPhotosByDay } from '@/utils/photoDayGroups'
@@ -191,6 +200,22 @@ const allPhotos = computed(() =>
 
 const dayGroups = computed(() => groupPhotosByDay(allPhotos.value).groups)
 
+// The viewer steps through photos in the same order the grid shows them.
+const viewerIndex = ref(null)
+const viewerPhotos = computed(() =>
+  dayGroups.value.flatMap((group) =>
+    group.photos.map((photo) => ({
+      ...photo,
+      fullPath: nodePath.value ? `${nodePath.value}/${photo.name}` : photo.name
+    }))
+  )
+)
+
+function openViewer(photo) {
+  const index = viewerPhotos.value.findIndex((p) => p.name === photo.name)
+  viewerIndex.value = index === -1 ? null : index
+}
+
 const heading = computed(() => pathSegments.value.at(-1) || 'Photos')
 const promptLine = computed(() =>
   pathSegments.value.length
@@ -250,6 +275,7 @@ watch(
     if (newPath === currentPath.value) return
     currentPath.value = newPath
     pathNotFound.value = false
+    viewerIndex.value = null
     if (photoStructure.value && newPath && getCurrentNode() === null) {
       pathNotFound.value = true
     }

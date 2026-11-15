@@ -8,6 +8,7 @@
     :href="href"
     target="_blank"
     rel="noopener"
+    @click="onClick"
   />
 </template>
 
@@ -24,14 +25,23 @@ const props = defineProps({
   loadImmediately: { type: Boolean, default: false }
 })
 
+const emit = defineEmits(['open'])
+
+// Plain clicks open the in-page viewer; modified clicks (new tab/window) keep the native link.
+const onClick = (event) => {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+  event.preventDefault()
+  emit('open')
+}
+
 const loading = ref(true)
 const error = ref(false)
 const imageUrl = ref(null)
 const isInView = ref(false)
 const rootEl = ref(null)
-const loadOptions = { quality: 0.6 }
+const loadOptions = { fallback: config.getPhotoUrl(props.fullPath), fallbackQuality: 0.6 }
 
-const url = computed(() => config.getPhotoUrl(props.fullPath))
+const url = computed(() => config.getPhotoVariantUrl(props.fullPath, 'thumb', props.photo.modified))
 
 let observer = null
 let cacheSubscription = null

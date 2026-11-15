@@ -13,7 +13,8 @@ class ImageCacheManager {
         this.cache = new Map()
         this.loadingQueue = []
         this.activeDownloads = 0
-        this.maxConcurrentDownloads = 3
+        // Gallery requests are small pre-generated thumbnails over HTTP/2, so more can fly at once.
+        this.maxConcurrentDownloads = 6
         this.observers = new Map()
         this.epoch = 0
     }
@@ -165,6 +166,18 @@ class ImageCacheManager {
     }
 
     async _attemptDownload(path, options = {}) {
+        // `path` is a pre-generated variant (e.g. a NAS thumbnail). If it doesn't exist yet
+        // (photo added since the last thumbnail run), fall back to the original, optionally
+        // downscaled client-side with `fallbackQuality`.
+        if (options.fallback) {
+            try {
+                await this._loadImageElement(path, {})
+                return path
+            } catch {
+                return this._attemptDownload(options.fallback, { quality: options.fallbackQuality })
+            }
+        }
+
         const wantsResize = !!(options.quality && options.quality < 1)
 
         if (wantsResize) {

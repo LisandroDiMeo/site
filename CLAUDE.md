@@ -27,6 +27,8 @@ python generate-photo-directory.py --user <ssh_user> --password <ssh_password> -
 
 This publishes `photo-index.json` on the NAS (`<remote-path>/photo-index.json`, served at `<VITE_EXTERNAL_PHOTOS_URL>/photo-index.json`), which the photo gallery fetches at runtime, respecting exclusions in `public/dont-show.json`. Pass `--local` to also write `public/photo-index.json` (fallback used when `VITE_EXTERNAL_PHOTOS_URL` is unset).
 
+Gallery thumbnails (`_derived/thumb`, 480px) and viewer images (`_derived/medium`, 2048px) are WebP copies generated **on the NAS** by `nas/generate-thumbnails.py` from an hourly cron (with `--index` it also refreshes `photo-index.json`). The NAS nginx config (cache headers, CORS, gzip) lives in App Central Nginx's `conf.d/`. See `docs/deployment.md`.
+
 ## Architecture
 
 Full details live in `docs/architecture.md`, `docs/deployment.md`, and `docs/design-system.md` — read them for anything beyond this summary.
@@ -46,7 +48,7 @@ Writing comes from the NAS (`VITE_EXTERNAL_WRITING_URL`), not an API. Check `src
 
 ### Photo gallery
 
-`ImageCacheManager` (`src/data/ImageCacheManager.js`) is a singleton that all photo components share for loading/caching. It implements a bounded concurrent-download queue (max 3), retry with backoff, and canvas-based quality reduction for thumbnails, releasing blob URLs when done. `PhotoThumbnail.vue` and `PhotoModal.vue` both go through it — do not bypass it with direct `<img src>` fetches for gallery photos, or caching/concurrency guarantees break.
+`ImageCacheManager` (`src/data/ImageCacheManager.js`) is a singleton that all photo components share for loading/caching. It implements a bounded concurrent-download queue (max 6), retry with backoff, and loading of pre-generated NAS variants (`config.getPhotoVariantUrl()`) with fallback to the original plus canvas-based downscaling, releasing blob URLs when done. `PhotoTile.vue`, `PhotoAlbumCard.vue` and `PhotoViewer.vue` all go through it — do not bypass it with direct `<img src>` fetches for gallery photos, or caching/concurrency guarantees break.
 
 ### Routing
 

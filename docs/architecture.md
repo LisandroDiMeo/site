@@ -7,7 +7,7 @@ src/
 ├── assets/styles/       # theme-f0.css (design tokens) + main.css (reset/base)
 ├── components/
 │   ├── shell/            # AppShell, AppNav — shared "Command Prompt" window chrome
-│   ├── photos/            # PhotoAlbumCard, PhotoTile
+│   ├── photos/            # PhotoAlbumCard, PhotoTile, PhotoViewer
 │   └── writing/           # WritingArticle — fetches and renders one .md from the NAS
 ├── composables/          # useJsonLoader, useMarkdownArticle, useWritingManifest
 ├── config/                # Environment-driven configuration (env.js)
@@ -41,7 +41,8 @@ All routes except `/` are lazy-loaded for code splitting. Each route carries `me
 ### Photos (`components/photos/`)
 
 - **PhotoAlbumCard.vue** — album/subfolder card: 2×2 cover mosaic (via `collectFirstPhotos`), name, `total_photos`, approximate date. Loads its 4 cover images through `ImageCacheManager`.
-- **PhotoTile.vue** — a single square grid tile. Same IntersectionObserver + `ImageCacheManager` lazy-loading pattern as before, just restyled (no label/frame).
+- **PhotoTile.vue** — a single square grid tile. Loads the NAS `thumb` variant through `ImageCacheManager` (falling back to the original). A plain click emits `open`; modified clicks keep the native link to the original.
+- **PhotoViewer.vue** — in-page viewer (Win97 window, teleported to `body`): shows the cached thumb blurred, then the `medium` variant; ←/→/Esc, prefetches the next photo, and a "View original" link to the full JPG.
 
 ## Services
 
@@ -84,17 +85,19 @@ Business logic is unchanged from before the redesign: `currentPath`/`getCurrentN
 - Subfolders render as `PhotoAlbumCard`s (mosaic cover, name, count).
 - A node's direct photos (`file_details`) are grouped by calendar day (derived from each file's `modified` timestamp, via `src/utils/photoDayGroups.js`) into a 6-column grid (3 on mobile), since `photo-index.json` has no day/place data of its own.
 - Album cover thumbnails are the first up-to-4 photos found via a depth-first walk of the subtree (`src/utils/photoAlbumCover.js`, memoized per node).
-- Tiles are plain links (`target="_blank"`) to the full-size photo on the NAS; there is no in-app viewer.
+- Tiles are links to the full-size photo, but a plain click opens `PhotoViewer` over the month/day's photos in grid order.
+- Tiles and covers load pre-generated WebP variants (`config.getPhotoVariantUrl(path, 'thumb' | 'medium', modified)` → `<photos>/_derived/<variant>/<path>.webp?v=<modified>`), produced on the NAS by `nas/generate-thumbnails.py` (see `docs/deployment.md`).
 - Date shortcuts: `/photos/2026/September/25` resolves the year inside whichever top-level album holds it (e.g. `RicohSOC`), and a numeric last segment matches a day folder (`25SEP`) or, for flat month folders, filters the month's photos by modified day. Day headings link to that day's route.
 
 ## Image Cache Manager (`data/ImageCacheManager.js`)
 
-Singleton for managing photo loading across the app — unchanged:
+Singleton for managing photo loading across the app:
 
 - **Observer pattern** — components subscribe/unsubscribe to image load events
-- **Queue management** — max 3 concurrent downloads
+- **Queue management** — max 6 concurrent downloads
+- **Variant fallback** — `loadImage(variantUrl, { fallback, fallbackQuality })` loads the NAS variant as a plain image; if it 404s (not generated yet) it loads `fallback` (the original), downscaled client-side when `fallbackQuality < 1`
 - **Retry logic** — 2 retries with exponential backoff (500ms, 1000ms)
-- **Quality reduction** — canvas-based resizing to 60% for thumbnails
+- **Quality reduction** — canvas-based resizing (60%, max 800px) only on the fallback path
 - **Blob URL lifecycle** — creates and revokes object URLs to prevent memory leaks
 - **Stats** — exposes `getStats()` with totalCached, loading, loaded, errors, queueLength, activeDownloads
 
@@ -114,4 +117,4 @@ Environment-driven config object (unchanged):
 | `localPhotosPath` | '/assets/photos' | Local photo path |
 | `externalPhotosUrl` | — | External NAS photo URL |
 
-Helper methods: `getPhotoUrl(photoPath)`, boolean flags `isLocal`, `isCloud`, `isDev`, `isProd`.
+Helper methods: `getPhotoUrl(photoPath)`, `getPhotoVariantUrl(photoPath, variant, version)`, boolean flags `isLocal`, `isCloud`, `isDev`, `isProd`.

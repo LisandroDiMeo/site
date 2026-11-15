@@ -74,11 +74,13 @@ def generate_file_index(ssh_user, ssh_password, ssh_host='192.168.1.80', remote_
 
         for entry in entries:
             if stat.S_ISDIR(entry.st_mode):
-                if entry.filename not in photos_to_omit_dirs:
+                # `_derived/` holds the NAS-generated thumbnails (nas/generate-thumbnails.py)
+                if entry.filename not in photos_to_omit_dirs and not entry.filename.startswith('_'):
                     subdirs.append(entry.filename)
             elif stat.S_ISREG(entry.st_mode):
                 suffix = PurePosixPath(entry.filename).suffix.lower()
-                if suffix in image_extensions and entry.filename not in photos_to_omit_list:
+                if suffix in image_extensions and entry.filename not in photos_to_omit_list \
+                        and not entry.filename.startswith('._'):
                     files.append(entry.filename)
                     file_details.append({
                         'name': entry.filename,

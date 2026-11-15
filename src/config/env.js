@@ -29,6 +29,16 @@ export const config = {
     return `${config.localPhotosPath}/${photoPath}`
   },
 
+  // Downscaled WebP copies generated on the NAS by nas/generate-thumbnails.py, mirrored under
+  // `_derived/<variant>/<original path>.webp`. `version` (the photo's `modified` timestamp from
+  // the index) busts the long-lived browser cache when a photo is replaced.
+  // Variants: 'thumb' (480px, grid tiles/covers) and 'medium' (2048px, the viewer).
+  getPhotoVariantUrl: (photoPath, variant, version) => {
+    const base = config.externalPhotosUrl || config.localPhotosPath
+    const url = `${base}/_derived/${variant}/${photoPath}.webp`
+    return version ? `${url}?v=${encodeURIComponent(version)}` : url
+  },
+
   // The photo index is published on the NAS next to the photos (see generate-photo-directory.py);
   // without an external URL, fall back to a copy served by the app itself.
   getPhotoIndexUrl: () =>
