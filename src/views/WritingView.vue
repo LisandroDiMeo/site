@@ -28,7 +28,7 @@
           v-if="!pathSegments.length"
           class="page-subtitle"
         >
-          Notes, essays and annotations. Folders first, newest first.
+          Notas, reflexiones, anotaciones.
         </div>
       </div>
 
@@ -36,31 +36,31 @@
         v-if="!configured"
         class="empty-state"
       >
-        Writing isn't available in this deployment.
+        Los escritos no están disponibles en este entorno.
       </div>
       <div
         v-else-if="loading"
         class="empty-state"
       >
-        Loading&hellip;
+        Cargando&hellip;
       </div>
       <div
         v-else-if="error"
         class="empty-state"
       >
-        Couldn't load the writing index.
+        No se pudo cargar el índice de escritos.
       </div>
       <div
         v-else-if="!resolved"
         class="empty-state"
       >
-        Directory not found.
+        No se encontró el directorio.
       </div>
       <div
         v-else-if="!resolved.node.subdirs.length && !resolved.node.file_details.length"
         class="empty-state"
       >
-        Nothing published yet.
+        Todavía no hay nada publicado.
       </div>
 
       <div
@@ -72,7 +72,7 @@
           :key="dir"
           class="entry-row"
         >
-          <span class="entry-count">{{ resolved.node.children[dir].total_articles }} notes</span>
+          <span class="entry-count">{{ resolved.node.children[dir].total_articles }} {{ resolved.node.children[dir].total_articles === 1 ? 'nota' : 'notas' }}</span>
           <RouterLink :to="folderRoute(childPath(dir))">
             {{ dir }}/
           </RouterLink>
@@ -126,7 +126,7 @@ const resolved = computed(() => resolveWritingPath(manifest.value, currentPath.v
 
 const files = computed(() => sortByDateDesc(resolved.value?.node?.file_details || []))
 
-const heading = computed(() => pathSegments.value.at(-1) || 'Writing')
+const heading = computed(() => pathSegments.value.at(-1) || 'Escritos')
 const parentRoute = computed(() => folderRoute(pathSegments.value.slice(0, -1).join('/')))
 
 const promptLine = computed(() => {

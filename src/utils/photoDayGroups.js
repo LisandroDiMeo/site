@@ -32,10 +32,10 @@ export function groupPhotosByDay(fileDetails) {
 }
 
 function formatDayLabel(dayKey) {
-  if (!dayKey) return 'Unknown date'
+  if (!dayKey) return 'Fecha desconocida'
   const date = new Date(`${dayKey}T00:00:00`)
   if (Number.isNaN(date.getTime())) return dayKey
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('es-AR', {
     weekday: 'short',
     day: 'numeric',
     month: 'short'

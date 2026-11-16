@@ -21,11 +21,11 @@ defineProps({
 })
 
 const items = [
-  { section: 'home', label: 'home', to: '/' },
-  { section: 'writing', label: 'writing', to: '/writing' },
-  { section: 'projects', label: 'projects', to: '/projects' },
-  { section: 'photos', label: 'photos', to: '/photos' },
-  { section: 'hello', label: 'hello', to: '/hello' }
+  { section: 'home', label: 'inicio', to: '/' },
+  { section: 'writing', label: 'escritos', to: '/writing' },
+  { section: 'projects', label: 'proyectos', to: '/projects' },
+  { section: 'photos', label: 'fotos', to: '/photos' },
+  { section: 'hello', label: 'hola', to: '/hello' }
 ]
 </script>
 

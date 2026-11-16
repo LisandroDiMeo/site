@@ -1,8 +1,8 @@
 <template>
   <AppShell title-bar-text="Command Prompt — lisandro">
     <div class="version-banner">
-      Lisandro Di Meo [Version 27.0]<br>
-      (c) CABA, Argentina. All rights reserved.
+      Lisandro Di Meo<br>
+      (c) CABA, Argentina.
     </div>
 
     <div class="intro">
@@ -10,8 +10,8 @@
         Lisandro Di Meo
       </h1>
       <p class="tagline">
-        Software Engineer and university professor.
-        Here I'll share a photograph diary, some toughts, and things I enjoy.
+        Software Engineer, profesor universitario y aprendiz de todo, maestro de nada.
+        Acá comparto fotos, escritos y proyectos personales.
       </p>
     </div>
 
@@ -22,7 +22,7 @@
       class="col"
     >
       <div class="section-label">
-        &gt; writing
+        &gt; escritos
       </div>
       <div
         v-for="post in recentPosts"
@@ -44,7 +44,7 @@
       class="elsewhere"
     >
       <div class="section-label">
-        &gt; elsewhere
+        &gt; en otros lados
       </div>
       <div class="elsewhere-links">
         <a

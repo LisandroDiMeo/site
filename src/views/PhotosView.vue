@@ -21,7 +21,7 @@
         v-if="!pathSegments.length"
         class="page-subtitle"
       >
-        Mostly film. One album per trip, place or obsession.
+        Diario fotográfico.
       </div>
     </div>
 
@@ -29,13 +29,13 @@
       v-if="pathNotFound"
       class="empty-state"
     >
-      Directory not found.
+      No se encontró el directorio.
     </div>
     <div
       v-else-if="loading"
       class="empty-state"
     >
-      Loading&hellip;
+      Cargando&hellip;
     </div>
 
     <template v-else>
@@ -94,7 +94,7 @@
         v-if="!currentDirectories.length && !dayGroups.length"
         class="empty-state"
       >
-        No photos here yet.
+        Todavía no hay fotos acá.
       </div>
 
       <PhotoViewer
@@ -216,7 +216,7 @@ function openViewer(photo) {
   viewerIndex.value = index === -1 ? null : index
 }
 
-const heading = computed(() => pathSegments.value.at(-1) || 'Photos')
+const heading = computed(() => pathSegments.value.at(-1) || 'Fotos')
 const promptLine = computed(() =>
   pathSegments.value.length
     ? `C:\\lisandro\\photos> cd ${pathSegments.value.at(-1)}`

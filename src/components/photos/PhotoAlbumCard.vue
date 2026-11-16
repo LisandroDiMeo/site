@@ -14,7 +14,7 @@
     <div class="album-meta">
       <span class="album-name">{{ name }}</span>
       <span class="album-info">
-        <template v-if="dateLabel">{{ dateLabel }} &middot; </template>{{ totalPhotos }} photo{{ totalPhotos === 1 ? '' : 's' }}
+        <template v-if="dateLabel">{{ dateLabel }} &middot; </template>{{ totalPhotos }} foto{{ totalPhotos === 1 ? '' : 's' }}
       </span>
     </div>
   </RouterLink>

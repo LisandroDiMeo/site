@@ -14,7 +14,7 @@
           <span class="viewer-title">{{ photo.name }}<template v-if="photo.dayLabel"> — {{ photo.dayLabel }}</template></span>
           <button
             class="viewer-btn"
-            aria-label="Close"
+            aria-label="Cerrar"
             @click="close"
           >
             &times;
@@ -34,7 +34,7 @@
             v-if="error"
             class="viewer-status"
           >
-            Couldn't load this photo.
+            No se pudo cargar esta foto.
           </div>
         </div>
 
@@ -44,7 +44,7 @@
             :disabled="index === 0"
             @click="go(-1)"
           >
-            &larr; Prev
+            &larr; Anterior
           </button>
           <span class="viewer-count">{{ index + 1 }} / {{ photos.length }}</span>
           <button
@@ -52,14 +52,14 @@
             :disabled="index === photos.length - 1"
             @click="go(1)"
           >
-            Next &rarr;
+            Siguiente &rarr;
           </button>
           <a
             class="viewer-btn wide original-link"
             :href="originalUrl"
             target="_blank"
             rel="noopener"
-          >View original</a>
+          >Ver original</a>
         </div>
       </div>
     </div>

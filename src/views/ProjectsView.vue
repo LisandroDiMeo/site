@@ -8,9 +8,9 @@
     </div>
 
     <div class="page-heading">
-      <h1>Projects</h1>
+      <h1>Proyectos</h1>
       <div class="page-subtitle">
-        Small things I've built and shipped on my own.
+        Cositas que hice.
       </div>
     </div>
 
@@ -18,13 +18,13 @@
       v-if="loading"
       class="empty-state"
     >
-      Loading&hellip;
+      Cargando&hellip;
     </div>
     <div
       v-else-if="!sorted.length"
       class="empty-state"
     >
-      Nothing here yet.
+      Todavía no hay nada acá.
     </div>
 
     <div
@@ -51,7 +51,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="project-repo"
-          >source</a>
+          >código</a>
         </div>
       </div>
     </div>

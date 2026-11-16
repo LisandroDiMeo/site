@@ -11,7 +11,7 @@
       <div class="error-code">
         404
       </div>
-      <p>'{{ $route.path }}' is not recognized as an internal or external command.</p>
+      <p>'{{ $route.path }}' no se reconoce como un comando interno o externo, programa o archivo por lotes ejecutable.</p>
       <RouterLink to="/">
         &larr; cd \
       </RouterLink>

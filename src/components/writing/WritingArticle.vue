@@ -3,13 +3,13 @@
     v-if="error"
     class="empty-state"
   >
-    Couldn't load this article.
+    No se pudo cargar este escrito.
   </div>
   <div
     v-else-if="content === null"
     class="empty-state"
   >
-    Loading&hellip;
+    Cargando&hellip;
   </div>
 
   <article
@@ -23,7 +23,7 @@
         <template v-if="article.modified.value">
           <span>&middot;</span><span>m. {{ article.modified.value }}</span>
         </template>
-        <span>&middot;</span><span>by lisandro</span>
+        <span>&middot;</span><span>por lisandro</span>
         <template v-if="article.tags.value.length">
           <span>&middot;</span>
           <span

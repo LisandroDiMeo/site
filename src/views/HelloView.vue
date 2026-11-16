@@ -8,13 +8,13 @@
     </div>
 
     <div class="page-heading">
-      <h1>Hello</h1>
+      <h1>Hola</h1>
     </div>
 
     <div class="bio">
       <p>
-        I'm Lisandro Diaz Di Meo, a Computer Scientist graduated from Universidad de Buenos Aires,
-        currently working as a Senior Mobile Engineer at
+        Soy Lisandro Diaz Di Meo, Licenciado en Ciencias de la Computación por la Universidad de
+        Buenos Aires. Actualmente trabajo como Senior Mobile Engineer en
         <a
           href="https://qubika.com/"
           target="_blank"
@@ -22,15 +22,16 @@
         >Qubika</a>.
       </p>
       <p>
-        At the moment I'm focused on AI agents for automated test generation, and on software
-        analysis techniques more broadly — dynamic and static analysis, fuzzing, search-based
-        software engineering.
+        Mi principal área de interés es el análisis automatizado de software: análisis estático y
+        dinámico, fuzzing, search-based SE, etc. Actualmente me estoy interiorizando en AI safety.
+        También estudio cómo integrar bien la IA en entornos profesionales y educativos (colegios,
+        universidades).
       </p>
       <p>
-        Outside of code: music, reading, writing, <RouterLink to="/photos">
-          photography
-        </RouterLink>,
-        teaching, and time with family and friends.
+        Fuera del ámbito profesional, me fascina descubrir música. También disfruto de leer, escribir,
+        mantener un <RouterLink to="/photos">
+          diario fotográfico
+        </RouterLink> y pasar tiempo con mis seres queridos.
       </p>
     </div>
 
@@ -39,7 +40,7 @@
       class="elsewhere"
     >
       <div class="section-label">
-        &gt; elsewhere
+        &gt; en otros lados
       </div>
       <div class="elsewhere-links">
         <a
